@@ -5,6 +5,4 @@ AllPartials :
   FlagDef +
   FlagVar +
   FlagInit +
-  GoType +
-  PackageName +
-  ParseBuiltin
+  GoHelpers

@@ -4,17 +4,19 @@ import (
   "strings"
 )
 
-Arg : {
-  Name:        string
-  argName: strings.ToCamel(Name)
-  ArgName: strings.ToTitle(Name)
+ArgType ::
+  "string"  |
+  "int"
 
-  Type:        string
+Arg :: {
+  Name:     string
+  argName:  strings.ToCamel(Name)
+  ArgName:  strings.ToTitle(Name)
 
-  // "this".Type
-  // Default:     Type
-
-  Help:        string
-  Validation:  string
+  Type:       ArgType
+  Default?:   _
+  Required?:  bool
+  Rest?:      bool
+  Help:       string
 }
 

@@ -7,6 +7,8 @@ import (
   "tool/file"
 )
 
+Outdir: "output/"
+
 command: gen: {
 
   var: {

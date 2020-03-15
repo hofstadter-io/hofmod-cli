@@ -5,8 +5,6 @@ import (
   "github.com/hofstadter-io/dsl-cli/schema"
 )
 
-Outdir: "output/" // or "./"
-
 GEN : cli.Generator & {
   Cli: CLI
 }

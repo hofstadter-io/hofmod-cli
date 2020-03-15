@@ -4,16 +4,23 @@ import (
   "strings"
 )
 
-Flag : {
-  Name:    string
-  flagName: strings.ToCamel(Name)
-  FlagName: strings.ToTitle(Name)
+FlagType ::
+  "string"  | "[]string"  |
+  "int"     | "[]int"     |
+  "float64" | "[]float64" |
+  "bool"
 
-  Type:        string
-  Default:     string
-  Help:        string
-  Long:        string
-  Short:       string
-  Validation:  string
+// FlagDefault: { TBD }
+
+Flag :: {
+  Name:      string
+  flagName:  strings.ToCamel(Name)
+  FlagName:  strings.ToTitle(Name)
+
+  Type:     FlagType
+  Default:  _
+  Help:     string
+  Long:     string
+  Short:    string
 }
 

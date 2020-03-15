@@ -4,37 +4,15 @@ FlagInit : RealFlagInit
 
 RealFlagInit : """
 {{ define "flag-init" }}
-// FlagInit
-
+{{ if or $.Pflags $.Flags}}
+func init () {
+  {{ range $i, $F := $.Pflags }}
+  {{ template "pflag-bind" $F }}
+  {{- end }}
+  {{ range $i, $F := $.Flags }}
+  {{ template "flag-bind" . }}
+  {{- end }}
+}
 {{ end }}
-"""
-
-OrigFlagInit : """
-{{#with . as |Cmd| }}
-{{#if Cmd.pflags}}
-func init() {
-{{#each Cmd.pflags}}
-{{#if Cmd.parent}}
-	{{> cli/golang/flag-def.go FLAG=. CMDNAME=(camelT Cmd.name) PERSIST="Persistent"}}
-{{else}}
-	{{> cli/golang/flag-def.go FLAG=. CMDNAME="Root" PERSIST="Persistent"}}
-{{/if}}
-
-{{/each}}
-}
-{{/if}}
-
-{{#if Cmd.flags}}
-func init() {
-{{#each Cmd.flags}}
-{{#if Cmd.parent}}
-	{{> cli/golang/flag-def.go FLAG=. CMDNAME=(camelT Cmd.name) PERSIST=""}}
-{{else}}
-	{{> cli/golang/flag-def.go FLAG=. CMDNAME="Root" PERSIST=""}}
-{{/if}}
-
-{{/each}}
-}
-{{/if}}
-{{/with}}
+{{ end }}
 """

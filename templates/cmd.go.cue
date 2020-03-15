@@ -69,7 +69,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
   {{ if .CMD.PersistentPrerun }}
   PersistentPreRun: func(cmd *cobra.Command, args []string) {
-    {{ template "args-parse" .CMD }}
+    {{ template "args-parse" .CMD.Args }}
 
     {{ if .CMD.PersistentPrerunBody }}
     {{ .CMD.PersistentPrerunBody }}
@@ -79,7 +79,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
   {{ if .CMD.Prerun }}
   PreRun: func(cmd *cobra.Command, args []string) {
-    {{ template "args-parse" .CMD }}
+    {{ template "args-parse" .CMD.Args }}
 
     {{ if .CMD.PrerunBody }}
     {{ .CMD.PrerunBody }}
@@ -89,7 +89,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
   {{ if not .CMD.OmitRun}}
   Run: func(cmd *cobra.Command, args []string) {
-    {{ template "args-parse" .CMD }}
+    {{ template "args-parse" .CMD.Args }}
 
     {{ if .CMD.Body}}
     {{ .CMD.Body}}
@@ -99,7 +99,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
   {{ if .CMD.PersistentPostrun}}
   PersistentPostRun: func(cmd *cobra.Command, args []string) {
-    {{ template "args-parse" .CMD }}
+    {{ template "args-parse" .CMD.Args }}
 
     {{ if .CMD.PersistentPostrunBody}}
     {{ .CMD.PersistentPostrunBody}}
@@ -109,7 +109,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
   {{ if .CMD.Postrun}}
   PostRun: func(cmd *cobra.Command, args []string) {
-    {{ template "args-parse" .CMD }}
+    {{ template "args-parse" .CMD.Args }}
 
     {{ if .CMD.PostrunBody }}
     {{ .CMD.PostrunBody }}
@@ -120,9 +120,9 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
 {{if .CMD.Commands}}
 func init() {
-	{{ range $i, $C := .CMD.Commands -}}
+	{{- range $i, $C := .CMD.Commands }}
   {{ $.CMD.CmdName }}Cmd.AddCommand({{ $.CMD.cmdName }}.{{ $C.CmdName }}Cmd)
-	{{ end -}}
+	{{- end}}
 }
 {{ end }}
 
