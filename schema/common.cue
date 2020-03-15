@@ -1,5 +1,10 @@
 package schema
 
+Import : {
+  As: string | *""
+  Path: string
+}
+
 common : {
   Usage:    string
   Short:    string
@@ -17,6 +22,7 @@ common : {
   PostrunBody?:            string
   PersistentPostrunBody?:  string
 
+  Imports?:  [...Import]
   Pflags?:   [...Flag]
   Flags?:    [...Flag]
   Args?:     [...Arg]
