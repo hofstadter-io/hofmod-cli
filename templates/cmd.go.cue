@@ -23,7 +23,7 @@ import (
   {{ end }}
 
   {{ if .CMD.Imports }}
-	{{ range $i, $I := .CMD.imports }}
+	{{ range $i, $I := .CMD.Imports }}
 	{{ $I.As }} "{{ $I.Path }}"
 	{{ end }}
 	{{ end }}

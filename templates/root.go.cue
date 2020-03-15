@@ -8,7 +8,6 @@ RootTemplate : partials.AllPartials + RealRootTemplate
 
 RealRootTemplate : """
 package commands
-// {{ .CLI.Package }}
 
 import (
   "fmt"
@@ -20,7 +19,7 @@ import (
   {{ end }}
 
   {{ if .CLI.Imports }}
-	{{ range $i, $I := .CLI.imports }}
+	{{ range $i, $I := .CLI.Imports }}
 	{{ $I.As }} "{{ $I.Path }}"
 	{{ end }}
 	{{ end }}
