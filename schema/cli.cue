@@ -6,8 +6,8 @@ import (
 
 Cli :: common & {
   Name:     string
-  cliName: strings.ToCamel(Name)
-  CliName: strings.ToTitle(Name)
+  cliName:  strings.ToCamel(Name)
+  CliName:  strings.ToTitle(Name)
 
   Package:  string
 }

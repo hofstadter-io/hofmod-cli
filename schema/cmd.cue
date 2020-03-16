@@ -6,10 +6,11 @@ import (
 
 Command :: common & {
   Name:     string
-  cmdName: strings.ToCamel(Name)
-  CmdName: strings.ToTitle(Name)
+  cmdName:  strings.ToCamel(Name)
+  CmdName:  strings.ToTitle(Name)
 
-  Aliases?: [...string]
-  PackageName?: string
+  Hidden:        bool | *false
+  Aliases?:      [...string]
+  PackageName?:  string
 }
 
