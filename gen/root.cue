@@ -8,6 +8,7 @@ import (
 )
 
 RootGen :: RootGenOpen & {}
+
 RootGenOpen : {
   In: {
     CLI: schema.Cli

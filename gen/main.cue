@@ -7,7 +7,7 @@ import (
   "github.com/hof-lang/cuemod--cli-golang/templates"
 )
 
-MainGen : MainGenOpen & {}
+MainGen :: MainGenOpen & {}
 
 MainGenOpen : {
   In: {
