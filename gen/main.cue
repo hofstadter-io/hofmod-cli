@@ -7,7 +7,9 @@ import (
   "github.com/hof-lang/cuemod--cli-golang/templates"
 )
 
-MainGen : {
+MainGen : MainGenOpen & {}
+
+MainGenOpen : {
   In: {
     CLI: schema.Cli
   }

@@ -12,7 +12,9 @@ FlagType ::
 
 // FlagDefault: { TBD }
 
-Flag :: {
+Flag :: FlagOpen & {}
+
+Flag : {
   Name:      string
   flagName:  strings.ToCamel(Name)
   FlagName:  strings.ToTitle(Name)

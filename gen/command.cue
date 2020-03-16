@@ -7,7 +7,9 @@ import (
   "github.com/hof-lang/cuemod--cli-golang/templates"
 )
 
-CommandGen : {
+CommandGen :: CommandGenOpen & {}
+
+CommandGenOpen : {
   In: {
     CLI: schema.Cli
     CMD: schema.Command

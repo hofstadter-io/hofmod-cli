@@ -8,7 +8,9 @@ ArgType ::
   "string"  |
   "int"
 
-Arg :: {
+Arg :: ArgOpen & {}
+
+ArgOpen : {
   Name:     string
   argName:  strings.ToCamel(Name)
   ArgName:  strings.ToTitle(Name)

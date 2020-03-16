@@ -7,7 +7,8 @@ import (
   "github.com/hof-lang/cuemod--cli-golang/templates"
 )
 
-RootGen : {
+RootGen :: RootGenOpen & {}
+RootGenOpen : {
   In: {
     CLI: schema.Cli
   }

@@ -1,11 +1,15 @@
 package schema
 
-Import : {
+Import :: ImportOpen & {}
+
+ImportOpen : {
   As: string | *""
   Path: string
 }
 
-common : {
+Common :: CommonOpen & {}
+
+CommonOpen : {
   Usage:    string
   Short:    string
   Long:     string
@@ -22,10 +26,10 @@ common : {
   PostrunBody?:            string
   PersistentPostrunBody?:  string
 
-  Imports?:  [...Import]
-  Pflags?:   [...Flag]
-  Flags?:    [...Flag]
-  Args?:     [...Arg]
-  Commands:  [...Command] | *[]
+  Imports?:  [...ImportOpen]
+  Pflags?:   [...FlagOpen]
+  Flags?:    [...FlagOpen]
+  Args?:     [...ArgOpen]
+  Commands:  [...CommandOpen] | *[]
 }
 
