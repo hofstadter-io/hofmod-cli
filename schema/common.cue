@@ -5,7 +5,7 @@ Import : {
   Path: string
 }
 
-Command : Common & {
+Common : {
   Usage:    string
   Short:    string
   Long:     string
@@ -22,10 +22,10 @@ Command : Common & {
   PostrunBody?:            string
   PersistentPostrunBody?:  string
 
-  Imports?:  [...ImportOpen]
-  Pflags?:   [...FlagOpen]
-  Flags?:    [...FlagOpen]
-  Args?:     [...ArgOpen]
-  Commands:  [...CommandOpen] | *[]
+  Imports?:  [...Import]
+  Pflags?:   [...Flag]
+  Flags?:    [...Flag]
+  Args?:     [...Arg]
+  Commands:  [...Command] | *[]
 }
 
