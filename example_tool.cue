@@ -7,8 +7,6 @@ import (
   "tool/file"
 )
 
-Outdir: "output/"
-
 command: gen: {
 
   var: {
@@ -53,6 +51,17 @@ command: gen: {
 
 }
 
+command: format: {
+  var: {
+    outdir: Outdir
+  }
+
+  task: shell: exec.Run & {
+    cmd: ["bash", "-c", "cd \(var.outdir) && goimports -w -l ."]
+    stdout: string
+  }
+}
+
 command: init: {
   var: {
     outdir: Outdir
@@ -94,4 +103,3 @@ command: build: {
   }
 
 }
-
