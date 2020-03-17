@@ -4,9 +4,7 @@ import (
   "strings"
 )
 
-Cli :: CliOpen & Common {}
-
-CliOpen : CommonOpen & {
+Cli : Common & {
   Name:     string
   cliName:  strings.ToCamel(Name)
   CliName:  strings.ToTitle(Name)

@@ -1,15 +1,11 @@
 package schema
 
-Import :: ImportOpen & {}
-
-ImportOpen : {
+Import : {
   As: string | *""
   Path: string
 }
 
-Common :: CommonOpen & {}
-
-CommonOpen : {
+Command : Common & {
   Usage:    string
   Short:    string
   Long:     string

@@ -1,8 +1,8 @@
 package cli
 
 import (
-  "github.com/hofstadter-io/dsl-cli:cli"
-  "github.com/hofstadter-io/dsl-cli/schema"
+  "github.com/hofstadter-io/cuemod--cli-golang:cli"
+  "github.com/hofstadter-io/cuemod--cli-golang/schema"
 )
 
 Outdir: "./example"

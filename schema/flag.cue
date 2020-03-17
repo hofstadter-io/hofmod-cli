@@ -12,8 +12,6 @@ FlagType ::
 
 // FlagDefault: { TBD }
 
-Flag :: FlagOpen & {}
-
 Flag : {
   Name:      string
   flagName:  strings.ToCamel(Name)

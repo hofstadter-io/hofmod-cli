@@ -4,9 +4,7 @@ import (
   "strings"
 )
 
-Command :: CommandOpen & {}
-
-CommandOpen : CommonOpen & {
+Command : {
   Name:     string
   cmdName:  strings.ToCamel(Name)
   CmdName:  strings.ToTitle(Name)
