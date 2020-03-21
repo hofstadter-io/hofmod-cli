@@ -1,0 +1,3 @@
+module github.com/hofstadter-io/cuemod--cli-golang
+
+cue 0.0.15

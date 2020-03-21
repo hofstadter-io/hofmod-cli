@@ -3,8 +3,8 @@ package gen
 import (
   "text/template"
 
-  "github.com/hof-lang/cuemod--cli-golang/schema"
-  "github.com/hof-lang/cuemod--cli-golang/templates"
+  "github.com/hofstadter-io/cuemod--cli-golang/schema"
+  "github.com/hofstadter-io/cuemod--cli-golang/templates"
 )
 
 MainGen : {

@@ -3,8 +3,8 @@ package cli
 import (
 	"list"
 
-  "github.com/hof-lang/cuemod--cli-golang/gen"
-  "github.com/hof-lang/cuemod--cli-golang/schema"
+  "github.com/hofstadter-io/cuemod--cli-golang/gen"
+  "github.com/hofstadter-io/cuemod--cli-golang/schema"
 )
 
 Schema : schema.Cli

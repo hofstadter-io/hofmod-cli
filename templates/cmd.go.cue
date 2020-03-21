@@ -1,7 +1,7 @@
 package templates
 
 import (
-  "github.com/hof-lang/cuemod--cli-golang/partials"
+  "github.com/hofstadter-io/cuemod--cli-golang/partials"
 )
 
 CommandTemplate : partials.AllPartials + RealCommandTemplate

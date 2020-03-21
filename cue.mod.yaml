@@ -1,3 +1,0 @@
-module: "github.com/hof-lang/cuemod--cli-golang"
-language: "cue"
-langver: "0.0.15"
