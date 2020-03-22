@@ -5,5 +5,3 @@ cue 0.0.15
 require (
   github.com/hofstadter-io/cuelib v0.0.1
 )
-
-// replace github.com/hofstadter-io/cuelib => ../cuelib
