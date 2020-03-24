@@ -1,5 +1,7 @@
 package templates
 
+ReleasesTemplate :: GoReleaserTemplate
+
 GoReleaserTemplate :: """
 build:
   main: main.go
@@ -35,16 +37,16 @@ archive:
 brew:
   name: {% .CLI.cliName %}
   github:
-    owner: {% .CLI.GoReleaser.Brew.GitHubOwner %}
-    name: {%  .CLI.GoReleaser.Brew.GitHubRepoName %}
+    owner: {% .CLI.Releases.Brew.GitHubOwner %}
+    name: {%  .CLI.Releases.Brew.GitHubRepoName %}
   folder: Formula
   commit_author:
-    name: {% .CLI.GoReleaser.Brew.GitHubUsername %}
-    email: {% .CLI.GoReleaser.Brew.GitHubEmail %}
-  homepage: {% .CLI.GoReleaser.Homepage %}
+    name: {% .CLI.Releases.Brew.GitHubUsername %}
+    email: {% .CLI.Releases.Brew.GitHubEmail %}
+  homepage: {% .CLI.Releases.Homepage %}
   description: '{% .CLI.Short %}'
 
 release:
-  draft: {% .CLI.GoReleaser.Draft %}
+  draft: {% .CLI.Releases.Draft %}
 
 """

@@ -11,5 +11,9 @@ Cli : Common & {
 
   Package:  string
 
-  GoReleaser: GoReleaser
+  VersionCommand: bool | *true
+  BashCompletion: bool | *true
+
+  Releases?: GoReleaser
+
 }
