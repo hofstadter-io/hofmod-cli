@@ -17,7 +17,17 @@ Generator : {
         CLI: Cli
       }
     },
+    gen.ToolGen & {
+      In: {
+        CLI: Cli
+      }
+    },
     gen.RootGen & {
+      In: {
+        CLI: Cli
+      }
+    },
+    gen.GoReleaserGen & {
       In: {
         CLI: Cli
       }

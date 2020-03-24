@@ -3,5 +3,5 @@ module github.com/hofstadter-io/cuemod--cli-golang
 cue 0.0.15
 
 require (
-  github.com/hofstadter-io/cuelib v0.0.1
+  github.com/hofstadter-io/cuelib v0.0.5
 )

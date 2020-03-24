@@ -10,4 +10,6 @@ Cli : Common & {
   CliName:  strings.ToTitle(Name)
 
   Package:  string
+
+  GoReleaser: GoReleaser
 }
