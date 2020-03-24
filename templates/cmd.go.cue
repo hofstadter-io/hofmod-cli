@@ -29,7 +29,15 @@ import (
 	{{ end }}
 
 	{{ if .CMD.Commands }}
-	"{{ .CLI.Package }}/{{ .CMD.cmdName }}"
+  {{ if .CMD.Parent.Parent.Parent }}
+	"{{ .CLI.Package }}/commands/{{ .CMD.Parent.Parent.Parent.Name }}/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
+  {{ else if .CMD.Parent.Parent }}
+	"{{ .CLI.Package }}/commands/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
+  {{ else if .CMD.Parent }}
+	"{{ .CLI.Package }}/commands/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
+  {{ else }}
+	"{{ .CLI.Package }}/commands/{{ .CMD.cmdName }}"
+  {{ end }}
 	{{ end }}
 )
 
@@ -93,6 +101,19 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
     {{ if .CMD.Body}}
     {{ .CMD.Body}}
+    {{ else }}
+
+    // Default body
+    {{ if .CMD.Parent.Parent.Parent }}
+    fmt.Println("{{ .CLI.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
+    {{ else if .CMD.Parent.Parent }}
+    fmt.Println("{{ .CLI.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
+    {{ else if .CMD.Parent }}
+    fmt.Println("{{ .CLI.Name }} {{ .CMD.Parent.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
+    {{ else }}
+    fmt.Println("{{ .CLI.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
+    {{ end }}
+
     {{ end }}
   },
   {{ end }}
