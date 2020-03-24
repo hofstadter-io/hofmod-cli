@@ -12,6 +12,7 @@ Schema : schema.Cli
 Generator : {
   Cli: schema.Cli
 
+  // Files that are not repeatedly used, they are generated once for the whole CLI
   _OnceIn: {
     In: {
       CLI: Cli

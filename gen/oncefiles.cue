@@ -34,9 +34,9 @@ VersionGen : {
   In: {
     CLI: schema.Cli
   }
-  if In.CLI.Releases != _|_ {
-    Template: templates.RootTemplate
-    Filename: "commands/root.go"
+  if In.CLI.VersionCommand != _|_ {
+    Template: templates.VersionCommandTemplate
+    Filename: "commands/version.go"
   }
 }
 

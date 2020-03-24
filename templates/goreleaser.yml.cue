@@ -6,7 +6,7 @@ GoReleaserTemplate :: """
 build:
   main: main.go
   binary: {% .CLI.cliName %}
-  ldflags: -s -w -X main.builddate={{.Date}}
+  ldflags: -s -w -X {% .CLI.Package %}/commands.Version={{.Version}} -X {% .CLI.Package %}/commands.Commit={{.ShortCommit}} -X {% .CLI.Package %}/commands.BuildDate={{.Date}}
   env:
     - CGO_ENABLED=0
   goos:

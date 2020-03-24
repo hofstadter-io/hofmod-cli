@@ -1,4 +1,0 @@
-blah: "blah"
-str : """
-  \\(blah)
-"""
