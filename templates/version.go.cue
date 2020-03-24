@@ -5,6 +5,7 @@ package commands
 
 import (
 	"os"
+  "time"
 
 	"github.com/spf13/cobra"
 )
@@ -12,7 +13,8 @@ import (
 var (
 	Version   = "dev"
 	Commit    = "dirty"
-	BuildDate = "unknown"
+  BuiltBy   = os.Getenv("USER")
+	BuildDate = time.Now().String()
 )
 
 var VersionLong = `Print the build version for {{ .CLI.cliName }}`
@@ -30,7 +32,7 @@ var VersionCmd = &cobra.Command{
 	Long: VersionLong,
 
 	Run: func(cmd *cobra.Command, args []string) {
-    fmt.Printf("Version:    %v\\nCommit:     %v\\nBuildDate:  %v\\n", Version, Commit, BuildDate)
+    fmt.Printf("Version:    %v\\nCommit:     %v\\nBuiltBy:    %v\\nBuildDate:  %v\\n", Version, Commit, BuiltBy, BuildDate)
 	},
 }
 
