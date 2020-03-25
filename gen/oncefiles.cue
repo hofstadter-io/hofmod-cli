@@ -16,7 +16,7 @@ OnceFiles :: [
 
 MainGen :: {
   In: {
-    CLI: schema.Cli
+    CLI: schema.Cli | *{...}
   }
   Template: templates.MainTemplate
   Filename: "main.go"
@@ -26,7 +26,7 @@ MainGen :: {
 
 RootGen :: {
   In: {
-    CLI: schema.Cli
+    CLI: schema.Cli | *{...}
   }
   Template: templates.RootTemplate
   Filename: "commands/root.go"
@@ -36,7 +36,7 @@ RootGen :: {
 
 VersionGen :: {
   In: {
-    CLI: schema.Cli
+    CLI: schema.Cli | *{...}
   }
   if In.CLI.VersionCommand != _|_ {
     Template: templates.VersionCommandTemplate
@@ -48,7 +48,7 @@ VersionGen :: {
 
 CompletionGen :: {
   In: {
-    CLI: schema.Cli
+    CLI: schema.Cli | *{...}
   }
   if In.CLI.BashCompletion != _|_ {
     Template: templates.BashCompletionTemplate
@@ -60,7 +60,7 @@ CompletionGen :: {
 
 ToolGen :: {
   In: {
-    CLI: schema.Cli
+    CLI: schema.Cli | *{...}
   }
   Template: templates.ToolTemplate
   Filename: "cue_tool.cue"
@@ -70,7 +70,7 @@ ToolGen :: {
 
 ReleasesGen :: {
   In: {
-    CLI: schema.Cli
+    CLI: schema.Cli | *{...}
   }
   if In.CLI.Releases != _|_ {
     Template: templates.ReleasesTemplate

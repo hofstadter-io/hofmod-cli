@@ -16,5 +16,8 @@ Cli :: Common & {
 
   Releases?: GoReleaser
 
+  // Debugging
+  EnablePProf: bool | *false
+
   ...
 }

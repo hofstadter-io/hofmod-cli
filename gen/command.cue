@@ -11,6 +11,7 @@ CommandGen :: {
     CMD: schema.Command
   }
   Template: templates.CommandTemplate
+
   if In.CMD.Parent == _|_ {
     Filename: "commands/\(In.CMD.Name).go"
   } 
