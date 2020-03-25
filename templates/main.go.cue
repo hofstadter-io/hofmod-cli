@@ -1,8 +1,8 @@
 package templates
 
-MainTemplate : RealMainTemplate
+MainTemplate :: RealMainTemplate
 
-RealMainTemplate : """
+RealMainTemplate :: """
 package main
 
 import (

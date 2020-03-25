@@ -10,17 +10,17 @@ FlagType ::
   "float64" | "[]float64" |
   "bool"
 
-// FlagDefault: { TBD }
-
-Flag : {
+Flag :: {
   Name:      string
   flagName:  strings.ToCamel(Name)
   FlagName:  strings.ToTitle(Name)
 
   Type:     FlagType
   Default:  _
-  Help:     string
-  Long:     string
-  Short:    string
+  Help:     string | *""
+  Long:     string | *""
+  Short:    string | *""
+
+  ...
 }
 

@@ -4,7 +4,7 @@ import (
   "strings"
 )
 
-Cli : Common & {
+Cli :: Common & {
   Name:     string
   cliName:  strings.ToCamel(Name)
   CliName:  strings.ToTitle(Name)
@@ -16,4 +16,5 @@ Cli : Common & {
 
   Releases?: GoReleaser
 
+  ...
 }

@@ -5,7 +5,7 @@ import (
   "github.com/hofstadter-io/cuemod--cli-golang/templates"
 )
 
-OnceFiles: [
+OnceFiles :: [
   MainGen,
   RootGen,
   VersionGen,
@@ -14,23 +14,27 @@ OnceFiles: [
   ReleasesGen
 ]
 
-MainGen : {
+MainGen :: {
   In: {
     CLI: schema.Cli
   }
   Template: templates.MainTemplate
   Filename: "main.go"
+
+  ...
 }
 
-RootGen : {
+RootGen :: {
   In: {
     CLI: schema.Cli
   }
   Template: templates.RootTemplate
   Filename: "commands/root.go"
+
+  ...
 }
 
-VersionGen : {
+VersionGen :: {
   In: {
     CLI: schema.Cli
   }
@@ -38,9 +42,11 @@ VersionGen : {
     Template: templates.VersionCommandTemplate
     Filename: "commands/version.go"
   }
+
+  ...
 }
 
-CompletionGen : {
+CompletionGen :: {
   In: {
     CLI: schema.Cli
   }
@@ -48,17 +54,21 @@ CompletionGen : {
     Template: templates.BashCompletionTemplate
     Filename: "commands/bash-completion.go"
   }
+
+  ...
 }
 
-ToolGen : {
+ToolGen :: {
   In: {
     CLI: schema.Cli
   }
   Template: templates.ToolTemplate
-  Filename: "cli_tool.cue"
+  Filename: "cue_tool.cue"
+
+  ...
 }
 
-ReleasesGen : {
+ReleasesGen :: {
   In: {
     CLI: schema.Cli
   }
@@ -67,5 +77,6 @@ ReleasesGen : {
     Filename: ".goreleaser.yml"
     Alt:      true
   }
-}
 
+  ...
+}

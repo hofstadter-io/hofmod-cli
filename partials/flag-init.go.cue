@@ -1,8 +1,8 @@
 package partials
 
-FlagInit : RealFlagInit
+FlagInit :: RealFlagInit
 
-RealFlagInit : """
+RealFlagInit :: """
 {{ define "flag-init" }}
 {{ if or $.Pflags $.Flags}}
 func init () {

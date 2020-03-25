@@ -1,8 +1,8 @@
 package partials
 
-FlagVar : RealFlagVar
+FlagVar :: RealFlagVar
 
-RealFlagVar : """
+RealFlagVar :: """
 {{ define "flag-vars" }}
 {{ if or $.Pflags $.Flags}}
 {{ $Prefix := "Root" }}

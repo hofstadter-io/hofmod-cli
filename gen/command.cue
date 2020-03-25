@@ -5,7 +5,7 @@ import (
   "github.com/hofstadter-io/cuemod--cli-golang/templates"
 )
 
-CommandGen : {
+CommandGen :: {
   In: {
     CLI: schema.Cli
     CMD: schema.Command
@@ -27,5 +27,7 @@ CommandGen : {
       }
     }
   }
+
+  ...
 }
 

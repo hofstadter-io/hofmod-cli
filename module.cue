@@ -7,9 +7,9 @@ import (
   "github.com/hofstadter-io/cuemod--cli-golang/schema"
 )
 
-Schema : schema.Cli
+Schema :: schema.Cli
 
-Generator : {
+Generator :: {
   Cli: schema.Cli
 
   // Files that are not repeatedly used, they are generated once for the whole CLI
@@ -17,6 +17,8 @@ Generator : {
     In: {
       CLI: Cli
     }
+
+    ...
   }
   _OnceFiles: [ G & _OnceIn for _, G in gen.OnceFiles ]
 
@@ -62,6 +64,7 @@ Generator : {
   ]
 
   // Combine everything together and output files that might need to be generated
+  // _All: [_OnceFiles, _Commands, _SubCommands, _SubSubCommands]
   _All: [_OnceFiles, _Commands, _SubCommands, _SubSubCommands]
   Out: list.FlattenN(_All , 1)
 }

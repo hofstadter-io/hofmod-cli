@@ -1,6 +1,6 @@
 package partials
 
-AllPartials :
+AllPartials ::
   ArgsParse +
   FlagDef +
   FlagVar +

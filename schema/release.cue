@@ -1,7 +1,7 @@
 package schema
 
 
-GoReleaser : {
+GoReleaser :: {
   Draft: bool | *true
   Author: string
   Homepage: string
@@ -12,4 +12,6 @@ GoReleaser : {
     GitHubUsername: string
     GitHubEmail: string
   }
+
+  ...
 }

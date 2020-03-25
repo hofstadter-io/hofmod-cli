@@ -4,9 +4,9 @@ import (
   "github.com/hofstadter-io/cuemod--cli-golang/partials"
 )
 
-RootTemplate : partials.AllPartials + RealRootTemplate
+RootTemplate :: partials.AllPartials + RealRootTemplate
 
-RealRootTemplate : """
+RealRootTemplate :: """
 package commands
 
 import (

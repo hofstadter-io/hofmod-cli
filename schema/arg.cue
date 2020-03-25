@@ -8,7 +8,7 @@ ArgType ::
   "string"  |
   "int"
 
-Arg : {
+Arg :: {
   Name:     string
   argName:  strings.ToCamel(Name)
   ArgName:  strings.ToTitle(Name)
@@ -17,6 +17,8 @@ Arg : {
   Default?:   _
   Required?:  bool
   Rest?:      bool
-  Help:       string
+  Help:       string | *""
+
+  ...
 }
 

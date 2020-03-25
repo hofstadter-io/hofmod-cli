@@ -1,8 +1,8 @@
 package partials
 
-ArgsParse : RealArgsParse
+ArgsParse :: RealArgsParse
 
-RealArgsParse : """
+RealArgsParse :: """
 {{ define "args-parse" }}
 {{ $ARGS := . }}
 // Argument Parsing

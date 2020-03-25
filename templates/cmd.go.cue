@@ -4,9 +4,9 @@ import (
   "github.com/hofstadter-io/cuemod--cli-golang/partials"
 )
 
-CommandTemplate : partials.AllPartials + RealCommandTemplate
+CommandTemplate :: partials.AllPartials + RealCommandTemplate
 
-RealCommandTemplate : """
+RealCommandTemplate :: """
 {{ if .CMD.Parent }}
 package {{ .CMD.Parent.Name }}
 {{ else }}

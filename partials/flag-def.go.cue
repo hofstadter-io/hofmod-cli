@@ -1,8 +1,8 @@
 package partials
 
-FlagDef : RealFlagDef
+FlagDef :: RealFlagDef
 
-RealFlagDef : """
+RealFlagDef :: """
 {{- define "pflag-bind" }}
 {{ $F := . }}
 {{ $Prefix := "Root" }}

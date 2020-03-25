@@ -4,7 +4,7 @@ import (
   "strings"
 )
 
-Command : Common & {
+Command :: Common & {
   Name:     string
   cmdName:  strings.ToCamel(Name)
   CmdName:  strings.ToTitle(Name)
@@ -12,5 +12,7 @@ Command : Common & {
   Hidden:        bool | *false
   Aliases?:      [...string]
   PackageName?:  string
+
+  ...
 }
 

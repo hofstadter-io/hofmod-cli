@@ -1,11 +1,11 @@
 package schema
 
-Import : {
+Import :: {
   As: string | *""
   Path: string
 }
 
-Common : {
+Common :: {
   Usage:    string
   Short:    string
   Long:     string
@@ -27,5 +27,7 @@ Common : {
   Flags?:    [...Flag]
   Args?:     [...Arg]
   Commands:  [...Command] | *[]
+
+  ...
 }
 
