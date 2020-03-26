@@ -14,9 +14,21 @@ package commands
 {{ end }}
 
 import (
-  {{ if not .CMD.Body}}
+  {{ if .CMD.Body}}
+  {{ else }}
   "fmt"
   {{end}}
+
+  {{ $already := false }}
+  {{ range $i, $A := .CMD.Args }}
+    {{ if $already }}
+    {{ else }}
+      {{ if $A.Required }}
+        {{ $already = true }}
+        "os"
+      {{ end }}
+    {{ end }}
+  {{ end }}
 
   "github.com/spf13/cobra"
   {{ if or .CMD.Flags .CMD.Pflags }}

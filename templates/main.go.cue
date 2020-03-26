@@ -8,6 +8,7 @@ import (
 	"os"
 
   {{ if .CLI.EnablePProf }}
+  "log"
 	"runtime/pprof"
   {{end}}
 
