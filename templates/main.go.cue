@@ -10,10 +10,7 @@ import (
 	"os"
 
   {{ if .CLI.EnablePProf }}
-  // Debug & PProf
-	"log"
-	"net/http"
-	_ "net/http/pprof"
+	"runtime/pprof"
   {{end}}
 
 	"github.com/spf13/viper"
@@ -23,10 +20,13 @@ import (
 
 func main() {
   {{ if .CLI.EnablePProf }}
-  // TODO, turn this into a flag and run if enabled, in root command persistent-pre-run
-	go func() {
-		log.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
+  // TODO, turn this into a flag and run if enabled, in root command persistent-pre-run, the flag should be a filename so we know where to write it
+	f, err := os.Create("hof-cpu.prof")
+	if err != nil {
+			log.Fatal(err)
+	}
+	pprof.StartCPUProfile(f)
+	defer pprof.StopCPUProfile()
   {{ end }}
 
 	if err := commands.RootCmd.Execute(); err != nil {

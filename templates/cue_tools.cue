@@ -57,7 +57,7 @@ command: render: {
 
       task: "print-\\(i)": cli.Print & {
         deps: [ task["write-\\(i)"].stdout]
-        text: task["write-\\(i)"].filename
+        text: F.Filename
       }
     } 
 
