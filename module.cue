@@ -19,48 +19,30 @@ Generator :: {
   // Files that are not repeatedly used, they are generated once for the whole CLI
   _OnceFiles: [
     {
-      In: {
-        CLI: Cli
-      }
       Template: templates.MainTemplate
       Filename: "main.go"
     },
     {
-      In: {
-        CLI: Cli
-      }
       Template: templates.RootTemplate
       Filename: "commands/root.go"
     },
     {
-      In: {
-        CLI: Cli
-      }
       if In.CLI.VersionCommand != _|_ {
         Template: templates.VersionCommandTemplate
         Filename: "commands/version.go"
       }
     },
     {
-      In: {
-        CLI: Cli
-      }
       if In.CLI.BashCompletion != _|_ {
         Template: templates.BashCompletionTemplate
         Filename: "commands/bash-completion.go"
       }
     },
     {
-      In: {
-        CLI: Cli
-      }
       Template: templates.ToolTemplate
       Filename: "cue_tool.cue"
     },
     {
-      In: {
-        CLI: Cli
-      }
       if In.CLI.Releases != _|_ {
         Template: templates.ReleasesTemplate
         Filename: ".goreleaser.yml"
@@ -74,7 +56,6 @@ Generator :: {
   _Commands: [ // List comprehension
     {
       In: {
-        CLI: Cli
         CMD: {
           C
           PackageName: "commands"
@@ -89,7 +70,6 @@ Generator :: {
   _SubCommands: [ // List comprehension
     {
       In: {
-        CLI: Cli
         CMD: C
       }
       Template: templates.CommandTemplate
@@ -101,7 +81,6 @@ Generator :: {
   _SubSubCommands: [ // List comprehension
     {
       In: {
-        CLI: Cli
         CMD: C
       }
       Template: templates.CommandTemplate
