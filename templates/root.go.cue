@@ -12,7 +12,7 @@ package commands
 import (
   "github.com/spf13/cobra"
   {{ if or .CLI.Flags .CLI.Pflags }}
-  "github.com/spf13/viper"
+  // "github.com/spf13/viper"
   {{ end }}
 
   {{ if .CLI.Imports }}

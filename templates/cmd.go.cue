@@ -14,7 +14,8 @@ package commands
 {{ end }}
 
 import (
-  {{ if .CMD.Body}}
+  {{ if or .CMD.OmitRun .CMD.Body }}
+  // hello... something might need to go here
   {{ else }}
   "fmt"
   {{end}}
