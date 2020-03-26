@@ -14,8 +14,9 @@ package commands
 {{ end }}
 
 import (
+  {{ if not .CMD.Body}}
   "fmt"
-  "os"
+  {{end}}
 
   "github.com/spf13/cobra"
   {{ if or .CMD.Flags .CMD.Pflags }}

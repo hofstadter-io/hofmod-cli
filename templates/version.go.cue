@@ -4,6 +4,7 @@ VersionCommandTemplate :: """
 package commands
 
 import (
+  "fmt"
 	"os"
   "time"
 

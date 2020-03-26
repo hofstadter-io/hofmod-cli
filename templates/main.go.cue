@@ -1,8 +1,6 @@
 package templates
 
-MainTemplate :: RealMainTemplate
-
-RealMainTemplate :: """
+MainTemplate :: """
 package main
 
 import (
@@ -12,8 +10,6 @@ import (
   {{ if .CLI.EnablePProf }}
 	"runtime/pprof"
   {{end}}
-
-	"github.com/spf13/viper"
 
 	"{{ .CLI.Package }}/commands"
 )
