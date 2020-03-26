@@ -3,22 +3,17 @@ package cli
 import (
 	"list"
 
-  "github.com/hofstadter-io/cuemod--cli-golang/gen"
   "github.com/hofstadter-io/cuemod--cli-golang/schema"
   "github.com/hofstadter-io/cuemod--cli-golang/templates"
 )
 
 Schema :: schema.Cli
 
-// Generator :: OptimizedGenerator
-Generator :: OrigGenerator
-
-OrigGenerator :: {
-  Cli: schema.Cli
+Generator :: {
+  Cli: Schema
 
   // Files that are not repeatedly used, they are generated once for the whole CLI
-  // Sub command tree
-  OnceFiles: [ // List comprehension
+  _OnceFiles: [
     {
       In: {
         CLI: Cli
@@ -72,11 +67,12 @@ OrigGenerator :: {
   ]
 
   // Sub command tree
-  Commands: [ // List comprehension
+  _Commands: [ // List comprehension
     {
       In: {
         CLI: Cli
-        CMD: C & {
+        CMD: {
+          C
           PackageName: "commands"
         }
       }
@@ -86,7 +82,7 @@ OrigGenerator :: {
     for _, C in Cli.Commands
   ]
 
-  SubCommands: [ // List comprehension
+  _SubCommands: [ // List comprehension
     {
       In: {
         CLI: Cli
@@ -95,10 +91,10 @@ OrigGenerator :: {
       Template: templates.CommandTemplate
       Filename: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
-    for _, C in list.FlattenN([[C & { Parent: P.In.CMD } for _, C in P.In.CMD.Commands] for _, P in Commands], 1)
+    for _, C in list.FlattenN([[{ C,  Parent: P.In.CMD } for _, C in P.In.CMD.Commands] for _, P in _Commands], 1)
   ]
 
-  SubSubCommands: [ // List comprehension
+  _SubSubCommands: [ // List comprehension
     {
       In: {
         CLI: Cli
@@ -107,32 +103,12 @@ OrigGenerator :: {
       Template: templates.CommandTemplate
       Filename: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
-    for _, C in list.FlattenN([[C & { Parent: P.In.CMD } for _, C in P.In.CMD.Commands] for _, P in SubCommands], 1)
+    for _, C in list.FlattenN([[{ C,  Parent: P.In.CMD } for _, C in P.In.CMD.Commands] for _, P in _SubCommands], 1)
   ]
 
   // SubSubSubCommand
   // Filename: "commands/\(In.CMD.Parent.Parent.Parent.Name)/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
 
   // Combine everything together and output files that might need to be generated
-  All: [OnceFiles, Commands, SubCommands, SubSubCommands]
-  Out: list.FlattenN(All , 1)
+  Out: list.FlattenN([_OnceFiles, _Commands, _SubCommands, _SubSubCommands] , 1)
 }
-
-OptimizedGenerator :: {
-  Cli: schema.Cli
-
-  // Files which only need to be generated once
-  //   see gen/oncefiles.cue
-  OnceFiles: gen.OnceFiles
-
-  // Files for commmands like turules
-  Commands:        list.FlattenN([[c & { Parent: C } for _, c in C.Commands] for _, C in Cli.Commands], -1)
-  SubCommands:     list.FlattenN([[c & { Parent: C } for _, c in C.Commands] for _, C in Commands], -1)
-  SubSubCommands:  list.FlattenN([[c & { Parent: C } for _, c in C.Commands] for _, C in SubCommands], -1)
-
-  // Combine everything together and output files that might need to be generated
-  All: [OnceFiles, Commands, SubCommands, SubSubCommands]
-  Out: list.FlattenN(All , 1)
-}
-
-
