@@ -4,7 +4,7 @@ import (
   "strings"
 )
 
-Cli :: Common & {
+Cli :: {
   Name:     string
   cliName:  strings.ToCamel(Name)
   CliName:  strings.ToTitle(Name)
@@ -18,6 +18,8 @@ Cli :: Common & {
 
   // Debugging
   EnablePProf: bool | *false
+
+  Common
 
   ...
 }

@@ -12,6 +12,10 @@ Schema :: schema.Cli
 Generator :: {
   Cli: Schema
 
+  In: {
+    CLI: Cli
+  }
+
   // Files that are not repeatedly used, they are generated once for the whole CLI
   _OnceFiles: [
     {
@@ -91,7 +95,7 @@ Generator :: {
       Template: templates.CommandTemplate
       Filename: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: P.In.CMD } for _, C in P.In.CMD.Commands] for _, P in _Commands], 1)
+    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands] for _, P in _Commands], 1)
   ]
 
   _SubSubCommands: [ // List comprehension
@@ -103,7 +107,7 @@ Generator :: {
       Template: templates.CommandTemplate
       Filename: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: P.In.CMD } for _, C in P.In.CMD.Commands] for _, P in _SubCommands], 1)
+    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands] for _, P in _SubCommands], 1)
   ]
 
   // SubSubSubCommand
