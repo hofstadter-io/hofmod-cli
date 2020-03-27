@@ -26,7 +26,7 @@ Common :: {
   Pflags?:   [...Flag]
   Flags?:    [...Flag]
   Args?:     [...Arg]
-  Commands:  [...Command] | *[]
+  Commands:  [...Command] | *[...]
 
   ...
 }

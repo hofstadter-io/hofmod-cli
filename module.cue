@@ -70,7 +70,7 @@ HofGenerator :: {
       Template: templates.CommandTemplate
       Filename: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands] for _, P in _Commands], 1)
+    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _Commands if P.In.CMD.Commands != _|_ ], 1)
   ]
 
   _SubSubCommands: [ // List comprehension
@@ -81,7 +81,7 @@ HofGenerator :: {
       Template: templates.CommandTemplate
       Filename: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands] for _, P in _SubCommands], 1)
+    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommands if P.In.CMD.Commands != _|_ ], 1)
   ]
 
   // SubSubSubCommand
