@@ -1,1 +1,1 @@
-module: "github.com/hofstadter-io/cuemod--cli-golang"
+module: "github.com/hofstadter-io/hofmod-cli"

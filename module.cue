@@ -3,14 +3,13 @@ package cli
 import (
 	"list"
 
-  "github.com/hofstadter-io/cuemod--cli-golang/schema"
-  "github.com/hofstadter-io/cuemod--cli-golang/templates"
+  "github.com/hofstadter-io/hofmod-cli/schema"
+  "github.com/hofstadter-io/hofmod-cli/templates"
 )
 
-Schema :: schema.Cli
-
 HofGenerator :: {
-  Cli: Schema
+  Cli: schema.Cli
+  Outdir?: string
 
   In: {
     CLI: Cli
@@ -37,10 +36,6 @@ HofGenerator :: {
         Template: templates.BashCompletionTemplate
         Filename: "commands/bash-completion.go"
       }
-    },
-    {
-      Template: templates.ToolTemplate
-      Filename: "cue_tool.cue"
     },
     {
       if In.CLI.Releases != _|_ {
@@ -137,13 +132,6 @@ CueGenerator :: {
         Template: templates.BashCompletionTemplate
         Filename: "commands/bash-completion.go"
       }
-    },
-    {
-      In: {
-        CLI: Cli
-      }
-      Template: templates.ToolTemplate
-      Filename: "cue_tool.cue"
     },
     {
       In: {

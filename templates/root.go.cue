@@ -1,7 +1,7 @@
 package templates
 
 import (
-  "github.com/hofstadter-io/cuemod--cli-golang/partials"
+  "github.com/hofstadter-io/hofmod-cli/partials"
 )
 
 RootTemplate :: partials.AllPartials + RealRootTemplate

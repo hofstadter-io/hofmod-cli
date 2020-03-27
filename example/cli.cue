@@ -1,8 +1,8 @@
 package cli
 
 import (
-  "github.com/hofstadter-io/cuemod--cli-golang:cli"
-  "github.com/hofstadter-io/cuemod--cli-golang/schema"
+  "github.com/hofstadter-io/hofmod-cli:cli"
+  "github.com/hofstadter-io/hofmod-cli/schema"
 )
 
 Outdir: "./example"
@@ -13,10 +13,10 @@ GEN : cli.Generator & {
 
 CLI : cli.Schema & {
   Name: "example"
-  Package: "github.com/hof-lang/cuemod--cli-golang/example"
+  Package: "github.com/hofstadter-io/hofmod-cli/example"
 
   Uage: "example"
-  Short: "Example CLI with hof-lang/cuemod--cli-golang"
+  Short: "Example CLI with hofstadter-io/hofmod-cli"
   Long:  Short
 
   OmitRun: true
