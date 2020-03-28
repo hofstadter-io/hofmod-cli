@@ -41,9 +41,9 @@ HofGenerator :: hof.HofGenerator & {
     },
     {
       if In.CLI.Releases != _|_ {
-        Template: templates.ReleasesTemplate
-        Filepath: ".goreleaser.yml"
-        Alt:      true
+        Template:  templates.ReleasesTemplate
+        Filepath:  ".goreleaser.yml"
+        AltDelims: true
       }
     },
 
