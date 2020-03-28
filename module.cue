@@ -19,28 +19,28 @@ HofGenerator :: {
   _OnceFiles: [
     {
       Template: templates.MainTemplate
-      Filename: "main.go"
+      Filepath: "main.go"
     },
     {
       Template: templates.RootTemplate
-      Filename: "commands/root.go"
+      Filepath: "commands/root.go"
     },
     {
       if In.CLI.VersionCommand != _|_ {
         Template: templates.VersionCommandTemplate
-        Filename: "commands/version.go"
+        Filepath: "commands/version.go"
       }
     },
     {
       if In.CLI.BashCompletion != _|_ {
         Template: templates.BashCompletionTemplate
-        Filename: "commands/bash-completion.go"
+        Filepath: "commands/bash-completion.go"
       }
     },
     {
       if In.CLI.Releases != _|_ {
         Template: templates.ReleasesTemplate
-        Filename: ".goreleaser.yml"
+        Filepath: ".goreleaser.yml"
         Alt:      true
       }
     },
@@ -57,7 +57,7 @@ HofGenerator :: {
         }
       }
       Template: templates.CommandTemplate
-      Filename: "commands/\(In.CMD.Name).go"
+      Filepath: "commands/\(In.CMD.Name).go"
     }
     for _, C in Cli.Commands
   ]
@@ -68,7 +68,7 @@ HofGenerator :: {
         CMD: C
       }
       Template: templates.CommandTemplate
-      Filename: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _Commands if P.In.CMD.Commands != _|_ ], 1)
   ]
@@ -79,13 +79,13 @@ HofGenerator :: {
         CMD: C
       }
       Template: templates.CommandTemplate
-      Filename: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommands if P.In.CMD.Commands != _|_ ], 1)
   ]
 
   // SubSubSubCommand
-  // Filename: "commands/\(In.CMD.Parent.Parent.Parent.Name)/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+  // Filepath: "commands/\(In.CMD.Parent.Parent.Parent.Name)/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
 
   // Combine everything together and output files that might need to be generated
   Out: list.FlattenN([_OnceFiles, _Commands, _SubCommands, _SubSubCommands] , 1)
@@ -106,14 +106,14 @@ CueGenerator :: {
         CLI: Cli
       }
       Template: templates.MainTemplate
-      Filename: "main.go"
+      Filepath: "main.go"
     },
     {
       In: {
         CLI: Cli
       }
       Template: templates.RootTemplate
-      Filename: "commands/root.go"
+      Filepath: "commands/root.go"
     },
     {
       In: {
@@ -121,7 +121,7 @@ CueGenerator :: {
       }
       if In.CLI.VersionCommand != _|_ {
         Template: templates.VersionCommandTemplate
-        Filename: "commands/version.go"
+        Filepath: "commands/version.go"
       }
     },
     {
@@ -130,7 +130,7 @@ CueGenerator :: {
       }
       if In.CLI.BashCompletion != _|_ {
         Template: templates.BashCompletionTemplate
-        Filename: "commands/bash-completion.go"
+        Filepath: "commands/bash-completion.go"
       }
     },
     {
@@ -139,7 +139,7 @@ CueGenerator :: {
       }
       if In.CLI.Releases != _|_ {
         Template: templates.ReleasesTemplate
-        Filename: ".goreleaser.yml"
+        Filepath: ".goreleaser.yml"
         Alt:      true
       }
     },
@@ -157,7 +157,7 @@ CueGenerator :: {
         }
       }
       Template: templates.CommandTemplate
-      Filename: "commands/\(In.CMD.Name).go"
+      Filepath: "commands/\(In.CMD.Name).go"
     }
     for _, C in Cli.Commands
   ]
@@ -169,7 +169,7 @@ CueGenerator :: {
         CMD: C
       }
       Template: templates.CommandTemplate
-      Filename: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands] for _, P in _Commands], 1)
   ]
@@ -181,13 +181,13 @@ CueGenerator :: {
         CMD: C
       }
       Template: templates.CommandTemplate
-      Filename: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands] for _, P in _SubCommands], 1)
   ]
 
   // SubSubSubCommand
-  // Filename: "commands/\(In.CMD.Parent.Parent.Parent.Name)/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+  // Filepath: "commands/\(In.CMD.Parent.Parent.Parent.Name)/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
 
   // Combine everything together and output files that might need to be generated
   Out: list.FlattenN([_OnceFiles, _Commands, _SubCommands, _SubSubCommands] , 1)
