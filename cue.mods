@@ -4,5 +4,5 @@ cue 0.0.15
 
 require (
   github.com/hofstadter-io/cuelib v0.0.5
-  github.com/hofstadter-io/hof v0.2.5
+  github.com/hofstadter-io/hof v0.2.9
 )

@@ -43,7 +43,13 @@ HofGenerator :: hof.HofGenerator & {
       if In.CLI.Releases != _|_ {
         Template:  templates.ReleasesTemplate
         Filepath:  ".goreleaser.yml"
-        AltDelims: true
+        TemplateConfig: {
+          AltDelims: true
+          LHS2_D: "{%"
+          RHS2_D: "%}"
+          LHS3_D: "{%%"
+          RHS3_D: "%%}"
+        }
       }
     },
 
