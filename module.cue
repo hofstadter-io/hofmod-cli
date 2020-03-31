@@ -39,6 +39,7 @@ HofGenerator :: hof.HofGenerator & {
         Filepath: "commands/bash-completion.go"
       }
     },
+
     {
       if In.CLI.Releases != _|_ {
         Template:  templates.ReleasesTemplate
@@ -50,6 +51,19 @@ HofGenerator :: hof.HofGenerator & {
           LHS3_D: "{%%"
           RHS3_D: "%%}"
         }
+      }
+    },
+
+    {
+      if In.CLI.Releases != _|_ {
+        Template:  templates.DockerfileJessie
+        Filepath:  "ci/docker/Dockerfile.jessie"
+      }
+    },
+    {
+      if In.CLI.Releases != _|_ {
+        Template:  templates.DockerfileScratch
+        Filepath:  "ci/docker/Dockerfile.scratch"
       }
     },
 
