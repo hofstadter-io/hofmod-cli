@@ -96,9 +96,9 @@ dockers:
   skip_push: true
   dockerfile: ci/docker/Dockerfile.scratch
   image_templates:
-  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}-scrath"
-  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}-scrath"
-  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}-scrath"
-  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:latest-scrath"
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}-scratch"
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}-scratch"
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}-scratch"
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:latest-scratch"
 
 """
