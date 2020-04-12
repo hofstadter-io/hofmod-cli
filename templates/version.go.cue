@@ -10,14 +10,13 @@ import (
 )
 
 var (
-	Version   = "local"
-	Commit    = "dirty"
+	Version   = "Local"
+	Commit    = "Dirty"
 
-	BuildDate = "unknown"
-  GoVersion = "unknown"
-  BuildOS   = "unknown"
-  BuildArch = "unknown"
-  BuildArm  = "n/a"
+	BuildDate = "Unknown"
+  GoVersion = "Unknown"
+  BuildOS   = "Unknown"
+  BuildArch = "Unknown"
 )
 
 const versionMessage = `
@@ -52,7 +51,6 @@ var VersionCmd = &cobra.Command{
       GoVersion,
       BuildOS,
       BuildArch,
-      BuildArm,
     )
 	},
 }

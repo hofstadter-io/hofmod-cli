@@ -15,8 +15,8 @@ DockerfileJessie :: """
 FROM debian:jessie
 \(DockerfileMaintainer)
 
-COPY hof /usr/bin/local
-ENTRYPOINT ["hof"]
+COPY {{ .CLI.cliName }} /usr/bin/local
+ENTRYPOINT ["{{ .CLI.cliName }}"]
 
 \(DockerfileWorkdir)
 
@@ -27,8 +27,8 @@ DockerfileScratch :: """
 FROM scratch
 \(DockerfileMaintainer)
 
-COPY hof /
-ENTRYPOINT ["/hof"]
+COPY {{ .CLI.cliName }} /
+ENTRYPOINT ["/{{ .CLI.cliName }}"]
 
 \(DockerfileWorkdir)
 
