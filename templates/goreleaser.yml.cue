@@ -77,7 +77,7 @@ release:
 dockers:
 - binaries:
     - {% .CLI.cliName %}
-  skip_push: true
+  skip_push: {% .CLI.Releases.Disabled %}
   dockerfile: ci/docker/Dockerfile.jessie
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}"
@@ -93,7 +93,7 @@ dockers:
 
 - binaries:
     - {% .CLI.cliName %}
-  skip_push: true
+  skip_push: {% .CLI.Releases.Disabled %}
   dockerfile: ci/docker/Dockerfile.scratch
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}-scratch"
