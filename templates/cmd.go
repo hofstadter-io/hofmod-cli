@@ -1,47 +1,50 @@
 {{ if .CMD.Parent }}
-package {{ .CMD.Parent.Name }}
+package cmd{{ .CMD.Parent.Name }}
 {{ else }}
-package commands
+package cmd
 {{ end }}
 
 import (
-  {{ if or .CMD.OmitRun .CMD.Body }}
-  // hello... something might need to go here
-  {{ else }}
-  "fmt"
-  {{end}}
-
-  {{ $already := false }}
-  {{ range $i, $A := .CMD.Args }}
-    {{ if $already }}
-    {{ else }}
-      {{ if $A.Required }}
-        {{ $already = true }}
-        "os"
-      {{ end }}
-    {{ end }}
-  {{ end }}
+	{{ if .CMD.HasAnyRun }}
+	"fmt"
+	"os"
+	{{end}}
 
   "github.com/spf13/cobra"
   {{ if or .CMD.Flags .CMD.Pflags }}
   "github.com/spf13/viper"
   {{ end }}
 
-  {{ if .CMD.Imports }}
-	{{ range $i, $I := .CMD.Imports }}
-	{{ $I.As }} "{{ $I.Path }}"
-	{{ end }}
-	{{ end }}
-
 	{{ if .CMD.Commands }}
   {{ if .CMD.Parent.Parent.Parent }}
-	"{{ .CLI.Package }}/commands/{{ .CMD.Parent.Parent.Parent.Name }}/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
+	"{{ .CLI.Package }}/cmd/{{ .CMD.Parent.Parent.Parent.Name }}/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
   {{ else if .CMD.Parent.Parent }}
-	"{{ .CLI.Package }}/commands/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
+	"{{ .CLI.Package }}/cmd/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
   {{ else if .CMD.Parent }}
-	"{{ .CLI.Package }}/commands/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
+	"{{ .CLI.Package }}/cmd/{{ .CMD.Parent.Name }}/{{ .CMD.cmdName }}"
   {{ else }}
-	"{{ .CLI.Package }}/commands/{{ .CMD.cmdName }}"
+	"{{ .CLI.Package }}/cmd/{{ .CMD.cmdName }}"
+  {{ end }}
+	{{ end }}
+
+	/*
+		{{ .CMD.PersistentPrerun }}
+		{{ .CMD.Prerun }}
+		{{ .CMD.OmitRun }}
+		{{ .CMD.PersistentPostrun }}
+		{{ .CMD.Postrun }}
+		{{ .CMD.HasAnyRun }}
+	*/
+
+	{{ if .CMD.HasAnyRun }}
+  {{ if .CMD.Parent.Parent.Parent }}
+	"{{ .CLI.Package }}/lib/cmd/{{ .CMD.Parent.Parent.Parent.Name }}/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}"
+  {{ else if .CMD.Parent.Parent }}
+	"{{ .CLI.Package }}/lib/cmd/{{ .CMD.Parent.Parent.Name }}/{{ .CMD.Parent.Name }}"
+  {{ else if .CMD.Parent }}
+	"{{ .CLI.Package }}/lib/cmd/{{ .CMD.Parent.Name }}"
+  {{ else }}
+	"{{ .CLI.Package }}/lib/cmd"
   {{ end }}
 	{{ end }}
 )
@@ -82,64 +85,91 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
   {{ if .CMD.PersistentPrerun }}
   PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		var err error
     {{ template "args-parse" .CMD.Args }}
 
-    {{ if .CMD.PersistentPrerunBody }}
-    {{ .CMD.PersistentPrerunBody }}
-    {{ end }}
+		{{ if .CMD.Parent }}
+		err = libcmd{{ .CMD.Parent.Name }}.{{ .CMD.CmdName }}PersistentPreRun({{ template "lib-call.go" . }})
+		{{ else }}
+		err = libcmd.{{ .CMD.CmdName }}PersistentPreRun({{ template "lib-call.go" . }})
+		{{ end }}
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
   },
   {{ end }}
 
   {{ if .CMD.Prerun }}
   PreRun: func(cmd *cobra.Command, args []string) {
+		var err error
     {{ template "args-parse" .CMD.Args }}
 
-    {{ if .CMD.PrerunBody }}
-    {{ .CMD.PrerunBody }}
-    {{ end }}
+		{{ if .CMD.Parent }}
+		err = libcmd{{ .CMD.Parent.Name }}.{{ .CMD.CmdName }}PreRun({{ template "lib-call.go" . }})
+		{{ else }}
+		err = libcmd.{{ .CMD.CmdName }}PreRun({{ template "lib-call.go" . }})
+		{{ end }}
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
   },
   {{ end }}
 
   {{ if not .CMD.OmitRun}}
   Run: func(cmd *cobra.Command, args []string) {
+		var err error
     {{ template "args-parse" .CMD.Args }}
 
-    {{ if .CMD.Body}}
-    {{ .CMD.Body}}
-    {{ else }}
+		{{ if .CMD.Parent }}
+		err = libcmd{{ .CMD.Parent.Name }}.{{ .CMD.CmdName }}Run({{ template "lib-call.go" . }})
+		{{ else }}
+		err = libcmd.{{ .CMD.CmdName }}Run({{ template "lib-call.go" . }})
+		{{ end }}
 
-    // Default body
-    {{ if .CMD.Parent.Parent.Parent }}
-    fmt.Println("{{ .CLI.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
-    {{ else if .CMD.Parent.Parent }}
-    fmt.Println("{{ .CLI.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
-    {{ else if .CMD.Parent }}
-    fmt.Println("{{ .CLI.Name }} {{ .CMD.Parent.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
-    {{ else }}
-    fmt.Println("{{ .CLI.Name }} {{ .CMD.Name }}"{{- range $i, $C := .CMD.Args }}, {{ .Name }}{{ end }})
-    {{ end }}
-
-    {{ end }}
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
   },
   {{ end }}
 
   {{ if .CMD.PersistentPostrun}}
   PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		var err error
     {{ template "args-parse" .CMD.Args }}
 
-    {{ if .CMD.PersistentPostrunBody}}
-    {{ .CMD.PersistentPostrunBody}}
-    {{ end }}
+		{{ if .CMD.Parent }}
+		err = libcmd{{ .CMD.Parent.Name }}.{{ .CMD.CmdName }}PostRun({{ template "lib-call.go" . }})
+		{{ else }}
+		err = libcmd.{{ .CMD.CmdName }}PostRun({{ template "lib-call.go" . }})
+		{{ end }}
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
   },
   {{ end }}
 
   {{ if .CMD.Postrun}}
   PostRun: func(cmd *cobra.Command, args []string) {
+		var err error
     {{ template "args-parse" .CMD.Args }}
 
-    {{ if .CMD.PostrunBody }}
-    {{ .CMD.PostrunBody }}
-    {{ end }}
+		{{ if .CMD.Parent }}
+		err = libcmd{{ .CMD.Parent.Name }}.{{ .CMD.CmdName }}PostRun(A, F)
+		{{ else }}
+		err = libcmd.{{ .CMD.CmdName }}PostRun(A, F)
+		{{ end }}
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
   },
   {{ end }}
 }
@@ -147,7 +177,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 {{if .CMD.Commands}}
 func init() {
 	{{- range $i, $C := .CMD.Commands }}
-  {{ $.CMD.CmdName }}Cmd.AddCommand({{ $.CMD.cmdName }}.{{ $C.CmdName }}Cmd)
+  {{ $.CMD.CmdName }}Cmd.AddCommand(cmd{{ $.CMD.cmdName }}.{{ $C.CmdName }}Cmd)
 	{{- end}}
 }
 {{ end }}

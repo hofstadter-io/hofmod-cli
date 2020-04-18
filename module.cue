@@ -43,18 +43,18 @@ HofGenerator :: hof.HofGenerator & {
     },
     {
       TemplateName: "root.go"
-      Filepath: "commands/root.go"
+      Filepath: "cmd/root.go"
     },
     {
       if In.CLI.VersionCommand != _|_ {
         TemplateName: "version.go"
-        Filepath: "commands/version.go"
+        Filepath: "cmd/version.go"
       }
     },
     {
       if In.CLI.BashCompletion != _|_ {
         TemplateName: "bash-completions.go"
-        Filepath: "commands/bash-completion.go"
+        Filepath: "cmd/bash-completion.go"
       }
     },
 
@@ -94,11 +94,11 @@ HofGenerator :: hof.HofGenerator & {
         // CLI
         CMD: {
           C
-          PackageName: "commands"
+          PackageName: "cmd"
         }
       }
       TemplateName: "cmd.go"
-      Filepath: "commands/\(In.CMD.Name).go"
+      Filepath: "cmd/\(In.CMD.Name).go"
     }
     for _, C in Cli.Commands
   ]
@@ -109,7 +109,7 @@ HofGenerator :: hof.HofGenerator & {
         CMD: C
       }
       TemplateName: "cmd.go"
-      Filepath: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "cmd/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _Commands if P.In.CMD.Commands != _|_ ], 1)
   ]
@@ -120,7 +120,7 @@ HofGenerator :: hof.HofGenerator & {
         CMD: C
       }
       TemplateName: "cmd.go"
-      Filepath: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "cmd/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommands if P.In.CMD.Commands != _|_ ], 1)
   ]
@@ -133,11 +133,11 @@ HofGenerator :: hof.HofGenerator & {
       In: {
         CMD: {
           C
-          PackageName: "commands"
+          PackageName: "cmdlib"
         }
       }
       TemplateName: "cmdlib.go"
-      Filepath: "lib/commands/\(In.CMD.Name).go"
+      Filepath: "lib/cmd/\(In.CMD.Name).go"
     }
     for _, C in Cli.Commands
   ]
@@ -148,7 +148,7 @@ HofGenerator :: hof.HofGenerator & {
         CMD: C
       }
       TemplateName: "cmdlib.go"
-      Filepath: "lib/commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "lib/cmd/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _CommandsLib if P.In.CMD.Commands != _|_ ], 1)
   ]
@@ -159,7 +159,7 @@ HofGenerator :: hof.HofGenerator & {
         CMD: C
       }
       TemplateName: "cmdlib.go"
-      Filepath: "lib/commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "lib/cmd/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommandsLib if P.In.CMD.Commands != _|_ ], 1)
   ]

@@ -9,7 +9,7 @@ import (
 	"runtime/pprof"
   {{end}}
 
-	"{{ .CLI.Package }}/commands"
+	"{{ .CLI.Package }}/cmd"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	defer pprof.StopCPUProfile()
   {{ end }}
 
-	if err := commands.RootCmd.Execute(); err != nil {
+	if err := cmd.RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 	}

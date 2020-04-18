@@ -22,6 +22,9 @@ Common :: {
   PostrunBody?:            string
   PersistentPostrunBody?:  string
 
+  HasAnyRun: bool
+  HasAnyRun: PersistentPrerun || Prerun || !OmitRun || Postrun || PersistentPostrun
+
   Imports?:  [...Import]
   Pflags?:   [...Flag]
   Flags?:    [...Flag]
