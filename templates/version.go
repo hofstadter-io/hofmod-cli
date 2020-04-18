@@ -1,6 +1,3 @@
-package templates
-
-VersionCommandTemplate :: """
 package commands
 
 import (
@@ -58,5 +55,3 @@ var VersionCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(VersionCmd)
 }
-"""
-

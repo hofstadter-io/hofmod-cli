@@ -1,8 +1,3 @@
-package partials
-
-ArgsParse :: RealArgsParse
-
-RealArgsParse :: """
 {{ define "args-parse" }}
 {{ $ARGS := . }}
 // Argument Parsing
@@ -39,4 +34,3 @@ if {{ $i }} < len(args) {
 }
 {{ end }}
 {{ end }}
-"""

@@ -1,12 +1,3 @@
-package templates
-
-import (
-  "github.com/hofstadter-io/hofmod-cli/partials"
-)
-
-CommandTemplate :: partials.AllPartials + RealCommandTemplate
-
-RealCommandTemplate :: """
 {{ if .CMD.Parent }}
 package {{ .CMD.Parent.Name }}
 {{ else }}
@@ -160,5 +151,3 @@ func init() {
 	{{- end}}
 }
 {{ end }}
-
-"""

@@ -1,8 +1,3 @@
-package partials
-
-GoHelpers :: RealGoType
-
-RealGoType :: """
 {{- define "cobra-type" -}}
 {{- if eq . "string"}}String
 {{- else if eq . "[]string" }}StringSlice
@@ -26,5 +21,3 @@ RealGoType :: """
 {{- else }}<unknown type '{{.}}'>
 {{- end -}}
 {{- end -}}
-
-"""

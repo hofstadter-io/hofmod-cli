@@ -13,36 +13,54 @@ HofGenerator :: hof.HofGenerator & {
   Cli: schema.Cli
   Outdir?: string
 
+  // Internal
   In: {
     CLI: Cli
   }
 
+  PackageName: "github.com/hofstadter-io/hofmod-cli"
+
+  PartialsDir:  "/partials/"
+  TemplatesDir: "/templates/"
+
+  // Combine everything together and output files that might need to be generated
+  _All: [
+    _OnceFiles,
+    _Commands,
+    _SubCommands,
+    _SubSubCommands,
+    _CommandsLib,
+    _SubCommandsLib,
+    _SubSubCommandsLib,
+  ]
+  Out: [...hof.HofGeneratorFile] & list.FlattenN(_All , 1)
+
   // Files that are not repeatedly used, they are generated once for the whole CLI
   _OnceFiles: [...hof.HofGeneratorFile] & [
     {
-      Template: templates.MainTemplate
+      TemplateName: "main.go"
       Filepath: "main.go"
     },
     {
-      Template: templates.RootTemplate
+      TemplateName: "root.go"
       Filepath: "commands/root.go"
     },
     {
       if In.CLI.VersionCommand != _|_ {
-        Template: templates.VersionCommandTemplate
+        TemplateName: "version.go"
         Filepath: "commands/version.go"
       }
     },
     {
       if In.CLI.BashCompletion != _|_ {
-        Template: templates.BashCompletionTemplate
+        TemplateName: "bash-completions.go"
         Filepath: "commands/bash-completion.go"
       }
     },
 
     {
       if In.CLI.Releases != _|_ {
-        Template:  templates.ReleasesTemplate
+        TemplateName:  "goreleaser.yml"
         Filepath:  ".goreleaser.yml"
         TemplateConfig: {
           AltDelims: true
@@ -73,12 +91,13 @@ HofGenerator :: hof.HofGenerator & {
   _Commands: [...hof.HofGeneratorFile] & [ // List comprehension
     {
       In: {
+        // CLI
         CMD: {
           C
           PackageName: "commands"
         }
       }
-      Template: templates.CommandTemplate
+      TemplateName: "cmd.go"
       Filepath: "commands/\(In.CMD.Name).go"
     }
     for _, C in Cli.Commands
@@ -89,7 +108,7 @@ HofGenerator :: hof.HofGenerator & {
       In: {
         CMD: C
       }
-      Template: templates.CommandTemplate
+      TemplateName: "cmd.go"
       Filepath: "commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _Commands if P.In.CMD.Commands != _|_ ], 1)
@@ -100,7 +119,7 @@ HofGenerator :: hof.HofGenerator & {
       In: {
         CMD: C
       }
-      Template: templates.CommandTemplate
+      TemplateName: "cmd.go"
       Filepath: "commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
     }
     for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommands if P.In.CMD.Commands != _|_ ], 1)
@@ -109,6 +128,40 @@ HofGenerator :: hof.HofGenerator & {
   // SubSubSubCommand
   // Filepath: "commands/\(In.CMD.Parent.Parent.Parent.Name)/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
 
-  // Combine everything together and output files that might need to be generated
-  Out: [...hof.HofGeneratorFile] & list.FlattenN([_OnceFiles, _Commands, _SubCommands, _SubSubCommands] , 1)
+  _CommandsLib: [...hof.HofGeneratorFile] & [ // List comprehension
+    {
+      In: {
+        CMD: {
+          C
+          PackageName: "commands"
+        }
+      }
+      TemplateName: "cmdlib.go"
+      Filepath: "lib/commands/\(In.CMD.Name).go"
+    }
+    for _, C in Cli.Commands
+  ]
+
+  _SubCommandsLib: [...hof.HofGeneratorFile] & [ // List comprehension
+    {
+      In: {
+        CMD: C
+      }
+      TemplateName: "cmdlib.go"
+      Filepath: "lib/commands/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+    }
+    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _CommandsLib if P.In.CMD.Commands != _|_ ], 1)
+  ]
+
+  _SubSubCommandsLib: [...hof.HofGeneratorFile] & [ // List comprehension
+    {
+      In: {
+        CMD: C
+      }
+      TemplateName: "cmdlib.go"
+      Filepath: "lib/commands/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+    }
+    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommandsLib if P.In.CMD.Commands != _|_ ], 1)
+  ]
+
 }

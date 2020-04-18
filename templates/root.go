@@ -1,12 +1,3 @@
-package templates
-
-import (
-  "github.com/hofstadter-io/hofmod-cli/partials"
-)
-
-RootTemplate :: partials.AllPartials + RealRootTemplate
-
-RealRootTemplate :: """
 package commands
 
 import (
@@ -103,5 +94,3 @@ func init() {
 	{{- end }}
 }
 {{ end }}
-
-"""

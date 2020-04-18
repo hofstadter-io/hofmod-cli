@@ -1,8 +1,3 @@
-package partials
-
-FlagDef :: RealFlagDef
-
-RealFlagDef :: """
 {{- define "pflag-bind" }}
 {{ $F := . }}
 {{ $Prefix := "Root" }}
@@ -17,5 +12,3 @@ RealFlagDef :: """
 {{ $Prefix }}Cmd.Flags().{{- template "cobra-type" $F.Type -}}VarP(&{{ $Prefix }}{{ $F.FlagName }}Flag, "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
 {{ end -}}
 
-
-"""

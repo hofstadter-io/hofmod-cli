@@ -1,6 +1,3 @@
-package templates
-
-BashCompletionTemplate :: """
 package commands
 
 import (
@@ -43,4 +40,3 @@ var BashCompletionCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(BashCompletionCmd)
 }
-"""

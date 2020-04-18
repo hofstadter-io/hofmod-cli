@@ -1,8 +1,3 @@
-package partials
-
-FlagInit :: RealFlagInit
-
-RealFlagInit :: """
 {{ define "flag-init" }}
 {{ if or $.Pflags $.Flags}}
 func init () {
@@ -15,4 +10,3 @@ func init () {
 }
 {{ end }}
 {{ end }}
-"""
