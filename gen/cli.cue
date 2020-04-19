@@ -1,4 +1,4 @@
-package cli
+package gen
 
 import (
 	"list"
@@ -44,6 +44,10 @@ HofGenerator :: hof.HofGenerator & {
     {
       TemplateName: "root.go"
       Filepath: "cmd/root.go"
+    },
+    {
+      TemplateName: "rootlib.go"
+      Filepath: "lib/cmd/root.go"
     },
     {
       if In.CLI.VersionCommand != _|_ {
@@ -165,3 +169,4 @@ HofGenerator :: hof.HofGenerator & {
   ]
 
 }
+

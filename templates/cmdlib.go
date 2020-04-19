@@ -68,7 +68,6 @@ func {{ .CMD.CmdName }}PersistentPostRun({{- template "lib-args.go" . -}}) (err 
 
 {{ if .CMD.Postrun}}
 func {{ .CMD.CmdName }}PostRun({{- template "lib-args.go" . -}}) (err error) {
-	{{ template "args-parse" .CMD.Args }}
 
 	{{ if .CMD.PostrunBody }}
 	{{ .CMD.PostrunBody }}
