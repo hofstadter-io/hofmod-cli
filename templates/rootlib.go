@@ -1,12 +1,5 @@
 package libcmd
 
-import (
-	{{ if not .Cli.OmitRun }}
-	"fmt"
-	{{end}}
-
-)
-
 {{ if .CLI.PersistentPrerun }}
 func RootPersistentPreRun({{- template "lib-args.go" . -}}) (err error) {
 	{{ if .CLI.PersistentPrerunBody }}
@@ -32,9 +25,6 @@ func RootRun({{ template "lib-args.go" . -}}) (err error) {
 
 	{{ if .CLI.Body}}
 	{{ .CLI.Body}}
-	{{ else }}
-	// Default body
-	fmt.Println("{{ .CLI.Name }} "{{- range $i, $C := .CLI.Args }}, {{ .Name }}{{ end }})
 	{{ end }}
 
 	return err
