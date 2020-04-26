@@ -1,11 +1,11 @@
 package schema
 
-Import :: {
+#Import: {
   As: string | *""
   Path: string
 }
 
-Common :: {
+#Common: {
   Usage:    string
   Short:    string
   Long:     string
@@ -25,11 +25,14 @@ Common :: {
   HasAnyRun: bool
   HasAnyRun: PersistentPrerun || Prerun || !OmitRun || Postrun || PersistentPostrun
 
-  Imports?:  [...Import]
-  Pflags?:   [...Flag]
-  Flags?:    [...Flag]
-  Args?:     [...Arg]
-  Commands:  [...Command] | *[...]
+  HasAnyFlags: bool
+  HasAnyFlags: Pflags != _|_ || Flags != _|_
+
+  Imports?:  [...#Import]
+  Pflags?:   [...#Flag]
+  Flags?:    [...#Flag]
+  Args?:     [...#Arg]
+  Commands:  [...#Command] | *[...]
 
   ...
 }

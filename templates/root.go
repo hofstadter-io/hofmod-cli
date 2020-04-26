@@ -11,14 +11,14 @@ import (
   // "github.com/spf13/viper"
   {{ end }}
 
-  {{ if .CLI.Imports }}
+	{{ if .CLI.Imports }}
 	{{ range $i, $I := .CLI.Imports }}
 	{{ $I.As }} "{{ $I.Path }}"
 	{{ end }}
 	{{ end }}
 
-	{{ if .CLI.HasAnyRun }}
-	"{{ .CLI.Package }}/lib/cmd"
+	{{ if .CLI.Pflags }}
+	"{{ .CLI.Package }}/pflags"
 	{{ end }}
 )
 
@@ -28,6 +28,60 @@ var {{ .CLI.Name }}Long = `{{ .CLI.Long }}`
 
 {{ template "flag-vars" .CLI }}
 {{ template "flag-init" .CLI }}
+{{ template "pflag-init" .CLI }}
+
+{{ if .CLI.PersistentPrerun }}
+func RootPersistentPreRun({{- template "lib-args.go" . -}}) (err error) {
+	{{ if .CLI.PersistentPrerunBody }}
+	{{ .CLI.PersistentPrerunBody }}
+	{{ end }}
+
+	return err
+}
+{{ end }}
+
+{{ if .CLI.Prerun }}
+func RootPreRun({{- template "lib-args.go" . -}}) (err error) {
+	{{ if .CLI.PrerunBody }}
+	{{ .CLI.PrerunBody }}
+	{{ end }}
+
+	return err
+}
+{{ end }}
+
+{{ if not .CLI.OmitRun}}
+func RootRun({{ template "lib-args.go" . -}}) (err error) {
+
+	{{ if .CLI.Body}}
+	{{ .CLI.Body}}
+	{{ end }}
+
+	return err
+}
+{{ end }}
+
+{{ if .CLI.PersistentPostrun}}
+func RootPersistentPostRun({{- template "lib-args.go" . -}}) (err error) {
+
+	{{ if .CLI.PersistentPostrunBody}}
+	{{ .CLI.PersistentPostrunBody}}
+	{{ end }}
+
+	return err
+}
+{{ end }}
+
+{{ if .CLI.Postrun}}
+func RootPostRun({{- template "lib-args.go" . -}}) (err error) {
+
+	{{ if .CLI.PostrunBody }}
+	{{ .CLI.PostrunBody }}
+	{{ end }}
+
+	return err
+}
+{{ end }}
 
 var RootCmd = &cobra.Command{
 
@@ -50,7 +104,7 @@ var RootCmd = &cobra.Command{
 		var err error
     {{ template "args-parse" .CLI.Args }}
 
-		err = libcmd.RootPersistentPreRun({{ template "lib-call.go" .CLI.Args }})
+		err = RootPersistentPreRun({{ template "lib-call.go" .CLI.Args }})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -63,7 +117,7 @@ var RootCmd = &cobra.Command{
 		var err error
     {{ template "args-parse" .CLI.Args }}
 
-		err = libcmd.RootPreRun({{ template "lib-call.go" .CLI.Args }})
+		err = RootPreRun({{ template "lib-call.go" .CLI.Args }})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -76,7 +130,7 @@ var RootCmd = &cobra.Command{
 		var err error
     {{ template "args-parse" .CLI.Args }}
 
-		err = libcmd.RootRun({{ template "lib-call.go" .CLI.Args }})
+		err = RootRun({{ template "lib-call.go" .CLI.Args }})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -89,7 +143,7 @@ var RootCmd = &cobra.Command{
 		var err error
     {{ template "args-parse" .CLI.Args }}
 
-		err = libcmd.RootRPersistentPostun({{ template "lib-call.go" .CLI.Args }})
+		err = RootRPersistentPostun({{ template "lib-call.go" .CLI.Args }})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -102,7 +156,7 @@ var RootCmd = &cobra.Command{
 		var err error
     {{ template "args-parse" .CLI.Args }}
 
-		err = libcmd.RootPostRun({{ template "lib-call.go" .CLI.Args }})
+		err = RootPostRun({{ template "lib-call.go" .CLI.Args }})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)

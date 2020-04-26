@@ -4,7 +4,7 @@ import (
   "strings"
 )
 
-Cli :: {
+#Cli: {
   Name:     string
   cliName:  strings.ToCamel(Name)
   CliName:  strings.ToTitle(Name)
@@ -14,12 +14,12 @@ Cli :: {
   VersionCommand: bool | *true
   BashCompletion: bool | *true
 
-  Releases?: GoReleaser
+  Releases?: #GoReleaser
 
   // Debugging
   EnablePProf: bool | *false
 
-  Common
+  #Common
 
   ...
 }

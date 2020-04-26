@@ -1,7 +1,7 @@
 package schema
 
 
-GoReleaser :: {
+#GoReleaser: {
   Disable: bool | *true
   Draft: bool | *true
   Author: string

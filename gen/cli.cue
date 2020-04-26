@@ -9,14 +9,23 @@ import (
   "github.com/hofstadter-io/hofmod-cli/templates"
 )
 
-HofGenerator :: hof.HofGenerator & {
-  Cli: schema.Cli
+#HofGenerator: hof.#HofGenerator & {
+  Cli: schema.#Cli
   Outdir?: string
+
+  OutdirConfig: {
+    CliOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)"
+    CmdOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)/cmd"
+    PflagOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)/pflags"
+    XtrOutdir: string | *"\(Outdir)"
+  }
 
   // Internal
   In: {
     CLI: Cli
   }
+
+  basedir: "cmd/\(In.CLI.cliName)"
 
   PackageName: "github.com/hofstadter-io/hofmod-cli"
 
@@ -26,46 +35,51 @@ HofGenerator :: hof.HofGenerator & {
   // Combine everything together and output files that might need to be generated
   _All: [
     _OnceFiles,
-    _Commands,
-    _SubCommands,
-    _SubSubCommands,
-    _CommandsLib,
-    _SubCommandsLib,
-    _SubSubCommandsLib,
+    _S1_Cmds,
+    _S2_Cmds,
+    _S3_Cmds,
+    _S4_Cmds,
+    _S5_Cmds,
+    _S1_Flags,
+    _S2_Flags,
+    _S3_Flags,
+    _S4_Flags,
+    _S5_Flags,
   ]
-  Out: [...hof.HofGeneratorFile] & list.FlattenN(_All , 1)
+
+  Out: [...hof.#HofGeneratorFile] & list.FlattenN(_All , 1)
 
   // Files that are not repeatedly used, they are generated once for the whole CLI
-  _OnceFiles: [...hof.HofGeneratorFile] & [
+  _OnceFiles: [...hof.#HofGeneratorFile] & [
     {
       TemplateName: "main.go"
-      Filepath: "main.go"
+      Filepath: "\(OutdirConfig.CliOutdir)/main.go"
     },
     {
       TemplateName: "root.go"
-      Filepath: "cmd/root.go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/root.go"
     },
     {
-      TemplateName: "rootlib.go"
-      Filepath: "lib/cmd/root.go"
+      TemplateName: "pflags.go"
+      Filepath: "\(OutdirConfig.PflagOutdir)/root.go"
     },
     {
       if In.CLI.VersionCommand != _|_ {
         TemplateName: "version.go"
-        Filepath: "cmd/version.go"
+        Filepath: "\(OutdirConfig.CmdOutdir)/version.go"
       }
     },
     {
       if In.CLI.BashCompletion != _|_ {
-        TemplateName: "bash-completions.go"
-        Filepath: "cmd/bash-completion.go"
+        TemplateName: "completions-bash.go"
+        Filepath: "\(OutdirConfig.CmdOutdir)/bash-completion.go"
       }
     },
 
     {
       if In.CLI.Releases != _|_ {
         TemplateName:  "goreleaser.yml"
-        Filepath:  ".goreleaser.yml"
+        Filepath:  "\(OutdirConfig.XtrOutdir)/.goreleaser.yml"
         TemplateConfig: {
           AltDelims: true
           LHS2_D: "{%"
@@ -79,20 +93,21 @@ HofGenerator :: hof.HofGenerator & {
     {
       if In.CLI.Releases != _|_ {
         Template:  templates.DockerfileJessie
-        Filepath:  "ci/docker/Dockerfile.jessie"
+        Filepath:  "\(OutdirConfig.XtrOutdir)/ci/docker/Dockerfile.jessie"
       }
     },
     {
       if In.CLI.Releases != _|_ {
         Template:  templates.DockerfileScratch
-        Filepath:  "ci/docker/Dockerfile.scratch"
+        Filepath:  "\(OutdirConfig.XtrOutdir)/ci/docker/Dockerfile.scratch"
       }
     },
 
   ]
 
   // Sub command tree
-  _Commands: [...hof.HofGeneratorFile] & [ // List comprehension
+  _S1_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in Cli.Commands
     {
       In: {
         // CLI
@@ -102,71 +117,149 @@ HofGenerator :: hof.HofGenerator & {
         }
       }
       TemplateName: "cmd.go"
-      Filepath: "cmd/\(In.CMD.Name).go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/\(In.CMD.Name).go"
     }
-    for _, C in Cli.Commands
   ]
 
-  _SubCommands: [...hof.HofGeneratorFile] & [ // List comprehension
+  _S2C: [ for P in _S1_Cmds if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name } }]
+  }]
+  _S2_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S2C, 1)
     {
       In: {
         CMD: C
       }
       TemplateName: "cmd.go"
-      Filepath: "cmd/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Name)/\(C.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _Commands if P.In.CMD.Commands != _|_ ], 1)
   ]
 
-  _SubSubCommands: [...hof.HofGeneratorFile] & [ // List comprehension
+  _S3C: [ for P in _S2_Cmds if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+  }]
+  _S3_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S3C, 1)
     {
       In: {
         CMD: C
       }
       TemplateName: "cmd.go"
-      Filepath: "cmd/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Parent.Name)/\(C.Parent.Name)/\(C.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommands if P.In.CMD.Commands != _|_ ], 1)
   ]
 
-  // SubSubSubCommand
-  // Filepath: "commands/\(In.CMD.Parent.Parent.Parent.Name)/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+  _S4C: [ for P in _S3_Cmds if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+  }]
+  _S4_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S4C, 1)
+    {
+      In: {
+        CMD: C
+      }
+      TemplateName: "cmd.go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Parent.Parent.Name)/\(C.Parent.Parent.Name)/\(C.Parent.Name)/\(C.Name).go"
+    }
+  ]
 
-  _CommandsLib: [...hof.HofGeneratorFile] & [ // List comprehension
+  _S5C: [ for P in _S4_Cmds if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+  }]
+  _S5_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S5C, 1)
+    {
+      In: {
+        CMD: C
+      }
+      TemplateName: "cmd.go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Parent.Parent.Parent.Name)/\(C.Parent.Parent.Parent.Name)/\(C.Parent.Parent.Name)/\(C.Parent.Name)/\(C.Name).go"
+    }
+  ]
+
+
+  // Persistent Flags
+  _S1_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in Cli.Commands if C.Pflags != _|_
+    {
+      In: {
+        // CLI
+        CMD: {
+          C
+          PackageName: "pflags"
+        }
+      }
+      TemplateName: "flags.go"
+      Filepath: "\(OutdirConfig.LibOutdir)/\(In.CMD.Name).go"
+    }
+  ]
+
+  _S2F: [ for P in _S1_Flags if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name } }]
+  }]
+  _S2_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S2F, 1)
     {
       In: {
         CMD: {
           C
-          PackageName: "cmdlib"
+          PackageName: "pflags"
         }
       }
-      TemplateName: "cmdlib.go"
-      Filepath: "lib/cmd/\(In.CMD.Name).go"
+      TemplateName: "pflags.go"
+      Filepath: "\(OutdirConfig.PflagsOutdir)/\(C.Parent.Name)__\(C.Name).go"
     }
-    for _, C in Cli.Commands
   ]
 
-  _SubCommandsLib: [...hof.HofGeneratorFile] & [ // List comprehension
+  _S3F: [ for P in _S2_Flags if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+  }]
+  _S3_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S3F, 1)
     {
       In: {
-        CMD: C
+        CMD: {
+          C
+          PackageName: "pflags"
+        }
       }
-      TemplateName: "cmdlib.go"
-      Filepath: "lib/cmd/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      TemplateName: "pflags.go"
+      Filepath: "\(OutdirConfig.LibOutdir)/\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name } } for _, C in P.In.CMD.Commands ] for _, P in _CommandsLib if P.In.CMD.Commands != _|_ ], 1)
   ]
 
-  _SubSubCommandsLib: [...hof.HofGeneratorFile] & [ // List comprehension
+  _S4F: [ for P in _S3_Flags if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+  }]
+  _S4_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S4F, 1)
     {
       In: {
-        CMD: C
+        CMD: {
+          C
+          PackageName: "pflags"
+        }
       }
-      TemplateName: "cmdlib.go"
-      Filepath: "lib/cmd/\(In.CMD.Parent.Parent.Name)/\(In.CMD.Parent.Name)/\(In.CMD.Name).go"
+      TemplateName: "pflags.go"
+      Filepath: "\(OutdirConfig.LibOutdir)/\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
-    for _, C in list.FlattenN([[{ C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } } for _, C in P.In.CMD.Commands ] for _, P in _SubCommandsLib if P.In.CMD.Commands != _|_ ], 1)
   ]
 
+  _S5F: [ for P in _S4_Flags if len(P.In.CMD.Commands) > 0 {
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+  }]
+  _S5_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(_S5F, 1)
+    {
+      In: {
+        CMD: {
+          C
+          PackageName: "pflags"
+        }
+      }
+      TemplateName: "pflags.go"
+      Filepath: "\(OutdirConfig.LibOutdir)/\(C.Parent.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
+    }
+  ]
 }
 
