@@ -63,7 +63,7 @@ changelog:
 
 
 release:
-  disable: {% .CLI.Releases.Disable %}
+  disable: {% .CLI.Releases.Disabled %}
   draft: {% .CLI.Releases.Draft %}
   github:
     owner: {% .CLI.Releases.GitHub.Owner %}
