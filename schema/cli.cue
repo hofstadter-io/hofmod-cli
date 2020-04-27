@@ -12,7 +12,7 @@ import (
   Package:  string
 
   VersionCommand: bool | *true
-  BashCompletion: bool | *true
+  CompletionCommands: bool | *true
 
   Releases?: #GoReleaser
 

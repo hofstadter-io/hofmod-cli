@@ -29,8 +29,17 @@ import (
 
   PackageName: "github.com/hofstadter-io/hofmod-cli"
 
-  PartialsDir:  "/partials/"
-  TemplatesDir: "/templates/"
+  PartialsDir:  "./partials/"
+  TemplatesDir: "./templates/"
+  TemplatesDirConfig: {
+    "**/goreleaser.yml": {
+      AltDelims: true
+      LHS2_D: "{%"
+      RHS2_D: "%}"
+      LHS3_D: "{%%"
+      RHS3_D: "%%}"
+    }
+  }
 
   // Combine everything together and output files that might need to be generated
   _All: [
@@ -70,23 +79,18 @@ import (
       }
     },
     {
-      if In.CLI.BashCompletion != _|_ {
-        TemplateName: "completions-bash.go"
-        Filepath: "\(OutdirConfig.CmdOutdir)/bash-completion.go"
+      if In.CLI.CompletionCommands != _|_ {
+        TemplateName: "completions.go"
+        Filepath: "\(OutdirConfig.CmdOutdir)/completions.go"
       }
     },
 
     {
       if In.CLI.Releases != _|_ {
-        TemplateName:  "goreleaser.yml"
-        Filepath:  "\(OutdirConfig.XtrOutdir)/.goreleaser.yml"
-        TemplateConfig: {
-          AltDelims: true
-          LHS2_D: "{%"
-          RHS2_D: "%}"
-          LHS3_D: "{%%"
-          RHS3_D: "%%}"
-        }
+        ( hof.#HofGeneratorFile & {
+          TemplateName:  "goreleaser.yml"
+          Filepath:  "\(OutdirConfig.XtrOutdir)/.goreleaser.yml"
+        })
       }
     },
 
