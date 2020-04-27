@@ -14,10 +14,10 @@ import (
   Outdir?: string
 
   OutdirConfig: {
+    CiOutdir: string | *"\(Outdir)/ci/\(In.CLI.cliName)"
     CliOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)"
     CmdOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)/cmd"
     PflagOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)/pflags"
-    XtrOutdir: string | *"\(Outdir)"
   }
 
   // Internal
@@ -89,7 +89,7 @@ import (
       if In.CLI.Releases != _|_ {
         ( hof.#HofGeneratorFile & {
           TemplateName:  "goreleaser.yml"
-          Filepath:  "\(OutdirConfig.XtrOutdir)/.goreleaser.yml"
+          Filepath:  "\(OutdirConfig.CliOutdir)/.goreleaser.yml"
         })
       }
     },
@@ -97,13 +97,13 @@ import (
     {
       if In.CLI.Releases != _|_ {
         Template:  templates.DockerfileJessie
-        Filepath:  "\(OutdirConfig.XtrOutdir)/ci/docker/Dockerfile.jessie"
+        Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.jessie"
       }
     },
     {
       if In.CLI.Releases != _|_ {
         Template:  templates.DockerfileScratch
-        Filepath:  "\(OutdirConfig.XtrOutdir)/ci/docker/Dockerfile.scratch"
+        Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.scratch"
       }
     },
 

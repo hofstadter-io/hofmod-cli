@@ -1,9 +1,7 @@
 module github.com/hofstadter-io/hofmod-cli
 
-cue 0.2.0
+cue master
 
 require (
-  // github.com/hofstadter-io/hof v0.0.0
+  github.com/hofstadter-io/hof v0.3.8
 )
-
-replace github.com/hofstadter-io/hof => ../../hof

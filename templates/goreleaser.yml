@@ -10,13 +10,13 @@ builds:
 
   ldflags:
     - -s -w
-    - -X {% .CLI.Package %}/commands.Version={{.Version}}
-    - -X {% .CLI.Package %}/commands.Commit={{.FullCommit}}
-    - -X {% .CLI.Package %}/commands.BuildDate={{.Date}}
-    - -X {% .CLI.Package %}/commands.GoVersion=go1.14
-    - -X {% .CLI.Package %}/commands.BuildOS={{.Os}}
-    - -X {% .CLI.Package %}/commands.BuildArch={{.Arch}}
-    - -X {% .CLI.Package %}/commands.BuildArm={{.Arm}}
+    - -X {% .CLI.Package %}/cmd.Version={{.Version}}
+    - -X {% .CLI.Package %}/cmd.Commit={{.FullCommit}}
+    - -X {% .CLI.Package %}/cmd.BuildDate={{.Date}}
+    - -X {% .CLI.Package %}/cmd.GoVersion=go1.14
+    - -X {% .CLI.Package %}/cmd.BuildOS={{.Os}}
+    - -X {% .CLI.Package %}/cmd.BuildArch={{.Arch}}
+    - -X {% .CLI.Package %}/cmd.BuildArm={{.Arm}}
 
   env:
   - CGO_ENABLED=0
@@ -73,7 +73,7 @@ dockers:
 - binaries:
     - {% .CLI.cliName %}
   skip_push: {% .CLI.Releases.Disabled %}
-  dockerfile: ci/docker/Dockerfile.jessie
+  dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.jessie
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}"
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
@@ -89,7 +89,7 @@ dockers:
 - binaries:
     - {% .CLI.cliName %}
   skip_push: {% .CLI.Releases.Disabled %}
-  dockerfile: ci/docker/Dockerfile.scratch
+  dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.scratch
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}-scratch"
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}-scratch"
