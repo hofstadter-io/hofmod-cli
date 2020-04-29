@@ -79,6 +79,12 @@ import (
       }
     },
     {
+      if In.CLI.Updates != _|_ {
+        TemplateName: "update.go"
+        Filepath: "\(OutdirConfig.CmdOutdir)/update.go"
+      }
+    },
+    {
       if In.CLI.CompletionCommands != _|_ {
         TemplateName: "completions.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/completions.go"

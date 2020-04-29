@@ -143,7 +143,7 @@ var RootCmd = &cobra.Command{
 		var err error
     {{ template "args-parse" .CLI.Args }}
 
-		err = RootRPersistentPostun({{ template "lib-call.go" .CLI.Args }})
+		err = RootPersistentPostRun({{ template "lib-call.go" .CLI.Args }})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
