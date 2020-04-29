@@ -32,8 +32,13 @@ func init() {
 	UpdateCmd.Flags().BoolVarP(&UpdateServeFlag, "serve", "", false, "start an update checking server")
 }
 
-const checkURL = `{{ .CLI.Updates.CheckURL }}`
-const fetchURL = `{{ .CLI.Updates.FetchURL }}`
+var checkURL = `{{ .CLI.Updates.CheckURL }}`
+
+func init () {
+	if Commit == "Dirty" {
+		checkURL = `{{ .CLI.Updates.DevCheckURL }}`
+	}
+}
 
 const updateMessage = `
 Updates available. v%s -> %s (latest)
@@ -271,8 +276,7 @@ func ServeUpdates() (err error) {
 			return
 		}
 
-		// url := "https://api.github.com/repos/{{ .CLI.Releases.GitHub.Owner }}/{{ .CLI.Releases.GitHub.Repo }}/releases/latest"
-		url := "https://api.github.com/repos/{{ .CLI.Releases.GitHub.Owner }}/hof/releases/latest"
+		url := "https://api.github.com/repos/{{ .CLI.Releases.GitHub.Owner }}/{{ .CLI.Releases.GitHub.Repo }}/releases/latest"
 		req := gorequest.New().Get(url)
 		resp, body, errs := req.End()
 
