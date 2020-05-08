@@ -9,6 +9,9 @@ import (
 	"fmt"
 	"os"
 	{{end}}
+	{{ if .CLI.Telemetry }}
+	"strings"
+	{{end}}
 
   "github.com/spf13/cobra"
   {{ if or .CMD.Flags .CMD.Pflags }}
@@ -35,6 +38,9 @@ import (
   {{ end }}
 	{{ end }}
 
+	{{ if .CLI.Telemetry }}
+	"{{ .CLI.Package }}/ga"
+	{{end}}
 	{{ if .CMD.Pflags }}
 	"{{ .CLI.Package }}/pflags"
 	{{ end }}
@@ -58,7 +64,7 @@ func {{ .CMD.CmdName }}PersistentPreRun({{- template "lib-args.go" . -}}) (err e
 }
 {{ end }}
 
-{{ if .CMD.Prerun }}
+{{ if .CMD.Prerun}}
 func {{ .CMD.CmdName }}PreRun({{- template "lib-args.go" . -}}) (err error) {
 	{{ if .CMD.PrerunBody }}
 	{{ .CMD.PrerunBody }}
@@ -140,8 +146,15 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
   },
   {{ end }}
 
-  {{ if .CMD.Prerun }}
+{{ if or .CMD.Prerun .CLI.Telemetry}}
   PreRun: func(cmd *cobra.Command, args []string) {
+		{{ if .CLI.Telemetry }}
+		cs := strings.Fields(cmd.CommandPath())
+		c := strings.Join(cs[1:], "/")
+		ga.SendGaEvent(c, strings.Join(args, "/"), 0)
+		{{ end }}
+
+		{{ if .CMD.Prerun}}
 		var err error
     {{ template "args-parse" .CMD.Args }}
 
@@ -150,6 +163,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
+		{{ end }}
   },
   {{ end }}
 
@@ -195,6 +209,16 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
 {{if .CMD.Commands}}
 func init() {
+	hf := {{ $.CMD.CmdName }}Cmd.HelpFunc()
+	f := func (cmd *cobra.Command, args []string) {
+		cs := strings.Fields(cmd.CommandPath())
+		c := strings.Join(cs[1:], "/")
+		as := strings.Join(args, "/")
+		ga.SendGaEvent(c + "/help", as, 0)
+		hf(cmd, args)
+	}
+	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(f)
+
 	{{- range $i, $C := .CMD.Commands }}
   {{ $.CMD.CmdName }}Cmd.AddCommand(cmd{{ $.CMD.cmdName }}.{{ $C.CmdName }}Cmd)
 	{{- end}}

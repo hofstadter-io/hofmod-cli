@@ -8,7 +8,7 @@ import (
   Name:     string
   cliName:  strings.ToCamel(Name)
   CliName:  strings.ToTitle(Name)
-  CLI_NAME:  strings.ToUpper(Name)
+  CLI_NAME: strings.ToUpper(Name)
 
   Package:  string
 
@@ -26,8 +26,9 @@ import (
     AvailableVersions: [...string]
 
     CheckingDisabled: bool | *false
-    TelemetryDisabled: bool | *false
   }
+
+  Telemetry?: string
 
   // Debugging
   EnablePProf: bool | *false

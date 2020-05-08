@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"os"
 	{{end}}
+	{{ if .CLI.Telemetry }}
+	"strings"
+	{{end}}
 
   "github.com/spf13/cobra"
   {{ if or .CLI.Flags .CLI.Pflags }}
@@ -17,6 +20,9 @@ import (
 	{{ end }}
 	{{ end }}
 
+	{{ if .CLI.Telemetry }}
+	"{{ .CLI.Package }}/ga"
+	{{end}}
 	{{ if .CLI.Pflags }}
 	"{{ .CLI.Package }}/pflags"
 	{{ end }}
@@ -112,8 +118,13 @@ var RootCmd = &cobra.Command{
   },
   {{ end }}
 
-  {{ if .CLI.Prerun }}
+{{ if or .CLI.Prerun .CLI.Telemetry}}
   PreRun: func(cmd *cobra.Command, args []string) {
+		{{ if .CLI.Telemetry }}
+		ga.SendGaEvent("root", strings.Join(args, "/"), 0)
+		{{ end }}
+
+		{{ if .CLI.Prerun}}
 		var err error
     {{ template "args-parse" .CLI.Args }}
 
@@ -122,6 +133,7 @@ var RootCmd = &cobra.Command{
 			fmt.Println(err)
 			os.Exit(1)
 		}
+		{{ end }}
   },
   {{ end }}
 
@@ -167,6 +179,18 @@ var RootCmd = &cobra.Command{
 
 {{if .CLI.Commands}}
 func init() {
+	{{ if .CLI.Telemetry }}
+	hf := RootCmd.HelpFunc()
+	f := func (cmd *cobra.Command, args []string) {
+		if RootCmd.Name() == cmd.Name() {
+			as := strings.Join(args, "/")
+			ga.SendGaEvent("root/help", as, 0)
+		}
+		hf(cmd, args)
+	}
+	RootCmd.SetHelpFunc(f)
+	{{ end }}
+
 	cobra.OnInitialize(initConfig)
 
 	{{- range $i, $C := .CLI.Commands }}

@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
-	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,13 +13,15 @@ import (
 
   "github.com/spf13/cobra"
 	"github.com/parnurzeal/gorequest"
+
+	"{{ .CLI.Package }}/ga"
+	"{{ .CLI.Package }}/verinfo"
 )
 
 var UpdateLong = `Print the build version for {{ .CLI.cliName }}`
 
 var (
 	UpdateCheckFlag bool
-	UpdateServeFlag bool
 
 	UpdateStarted bool
 	UpdateErrored bool
@@ -33,15 +32,6 @@ var (
 
 func init() {
 	UpdateCmd.Flags().BoolVarP(&UpdateCheckFlag, "check", "", false, "set to only check for an update")
-	UpdateCmd.Flags().BoolVarP(&UpdateServeFlag, "serve", "", false, "start an update checking server")
-}
-
-var checkURL = `{{ .CLI.Updates.CheckURL }}`
-
-func init () {
-	if Commit == "Dirty" {
-		checkURL = `{{ .CLI.Updates.DevCheckURL }}`
-	}
 }
 
 const updateMessage = `
@@ -61,16 +51,11 @@ var UpdateCmd = &cobra.Command{
 
 	Long: UpdateLong,
 
-	Run: func(cmd *cobra.Command, args []string) {
-		if UpdateServeFlag {
-			err := ServeUpdates()
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(-1)
-			}
+	PreRun: func(cmd *cobra.Command, args []string) {
+		ga.SendGaEvent("update", strings.Join(args, "/"), 0)
+	},
 
-			return
-		}
+	Run: func(cmd *cobra.Command, args []string) {
 
 		latest, err := CheckUpdate(true)
 		if err != nil {
@@ -79,12 +64,10 @@ var UpdateCmd = &cobra.Command{
 		}
 
 		// Semver Check?
-		cur := ProgramVersion{Version: "v" + Version}
-		if latest.Version == cur.Version {
+		cur := ProgramVersion{Version: "v" + verinfo.Version}
+		if latest.Version == cur.Version || cur.Version == "vLocal" {
 			return
 		} else {
-			// This will actually be called on the root persistent post run anyway
-			// fmt.Printf(updateMessage, Version, latest.Version)
 			if UpdateCheckFlag {
 				return
 			}
@@ -116,16 +99,13 @@ func CheckUpdate(manual bool) (ver ProgramVersion, err error) {
 		return
 	}
 	UpdateStarted = true
-	cur := ProgramVersion{Version: "v" + Version}
+	cur := ProgramVersion{Version: "v" + verinfo.Version}
+
+	checkURL :="{{ .CLI.Releases.GitHub.Rel }}/latest"
 
 	req := gorequest.New().Get(checkURL).
 		Query("current="+cur.Version).
 		Query("manual="+fmt.Sprint(manual))
-	{{ if not .CLI.Updates.TelemetryDisabled }}
-	if os.Getenv("{{ .CLI.CLI_NAME }}_TELEMETRY_DISABLED") != "" {
-		req.Query("args=" + url.QueryEscape(strings.Join(os.Args, " ")))
-	}
-	{{ end }}
 	resp, b, errs := req.EndBytes()
 	UpdateErrored = true
 
@@ -144,19 +124,9 @@ func CheckUpdate(manual bool) (ver ProgramVersion, err error) {
 		}
 		return ver, fmt.Errorf("Bad Request: " + string(b))
 	}
+
 	UpdateErrored = false
-
-	if !manual {
-		ver.Version = string(b)
-		UpdateChecked = true
-
-		// Semver Check?
-		if ver.Version != cur.Version {
-			UpdateAvailable = &ver
-		}
-
-		return ver, nil
-	}
+	// fmt.Println(string(b))
 
 	var gh map[string]interface{}
 	err = json.Unmarshal(b, &gh)
@@ -172,14 +142,24 @@ func CheckUpdate(manual bool) (ver ProgramVersion, err error) {
 	if !ok {
 		return ver, fmt.Errorf("Internal Error: version is not a string in update check response")
 	}
-
-	// TODO, pick correct URL from reponse by build os / arch
-
 	ver.Version = name
+
+	if !manual {
+		UpdateChecked = true
+
+		// Semver Check?
+		if ver.Version != cur.Version && cur.Version != "vLocal"{
+			UpdateAvailable = &ver
+		}
+
+		return ver, nil
+	}
+
+	// This goes here and signals else where that we got the request back
 	UpdateChecked = true
 
 	// Semver Check?
-	if ver.Version != cur.Version {
+	if ver.Version != cur.Version && cur.Version != "vLocal"{
 		UpdateAvailable = &ver
 		aI, ok := gh["assets"]
 		if ok {
@@ -202,7 +182,7 @@ func WaitPrintUpdateAvail() {
 
 func PrintUpdateAvailable() {
 	if UpdateChecked && UpdateAvailable != nil {
-		fmt.Printf(updateMessage, Version, UpdateAvailable.Version)
+		fmt.Printf(updateMessage, verinfo.Version, UpdateAvailable.Version)
 	}
 }
 
@@ -219,7 +199,7 @@ func InstallLatest() (err error) {
 	}
 	*/
 
-	fmt.Println("OS/Arch", BuildOS, BuildArch)
+	fmt.Println("OS/Arch", verinfo.BuildOS, verinfo.BuildArch)
 
 	url := ""
 	for _, Asset := range UpdateData {
@@ -229,7 +209,7 @@ func InstallLatest() (err error) {
 
 		osOk, archOk := false, false
 
-		switch BuildOS {
+		switch verinfo.BuildOS {
 		case "linux":
 			if strings.Contains(u, "linux") {
 				osOk = true
@@ -246,7 +226,7 @@ func InstallLatest() (err error) {
 			}
 		}
 
-		switch BuildArch {
+		switch verinfo.BuildArch {
 			case "amd64":
 			if strings.Contains(u, "x86_64"){
 				archOk = true
@@ -269,7 +249,7 @@ func InstallLatest() (err error) {
 
 	fmt.Println("Download URL: ", url, "\n")
 
-		switch BuildOS {
+		switch verinfo.BuildOS {
 		case "linux":
 			fallthrough
 		case "darwin":
@@ -284,49 +264,6 @@ func InstallLatest() (err error) {
 
 	return nil
 }
-
-func ServeUpdates() (err error) {
-	fmt.Printf("Serving...\n")
-
-	http.HandleFunc("/check", func(w http.ResponseWriter, r *http.Request) {
-		q := r.URL.Query()
-		log.Println("CHECK", r.RemoteAddr, q)
-
-		if q.Get("manual") != "true" {
-			fmt.Fprint(w, "v" + Version)
-			return
-		}
-
-		url := "https://api.github.com/repos/{{ .CLI.Releases.GitHub.Owner }}/{{ .CLI.Releases.GitHub.Repo }}/releases/latest"
-		req := gorequest.New().Get(url)
-		resp, body, errs := req.End()
-
-		check := "http2: server sent GOAWAY and closed the connection"
-		if len(errs) != 0 && !strings.Contains(errs[0].Error(), check) {
-			fmt.Println("errs:", errs)
-			fmt.Println("resp:", resp)
-			fmt.Println("body:", body)
-			return
-		}
-
-		if len(errs) != 0 || resp.StatusCode >= 500 {
-			http.Error(w, body, resp.StatusCode)
-			return
-			// return ver, fmt.Errorf("Internal Error: " + body)
-		}
-		if resp.StatusCode >= 400 {
-			http.Error(w, body, resp.StatusCode)
-			return
-		}
-
-		fmt.Fprint(w, body)
-	})
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
-
-	return nil
-}
-
 
 func downloadAndInstall(url string) error {
 	req := gorequest.New().Get(url)

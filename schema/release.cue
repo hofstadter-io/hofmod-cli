@@ -10,6 +10,8 @@ package schema
   GitHub: {
     Owner: string
     Repo: string
+    URL: "https://github.com/\(Owner)/\(Repo)"
+    Rel: "https://api.github.com/repos/\(Owner)/\(Repo)/releases"
   }
 
   Docker: {

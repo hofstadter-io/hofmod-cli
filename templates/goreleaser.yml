@@ -10,13 +10,13 @@ builds:
 
   ldflags:
     - -s -w
-    - -X {% .CLI.Package %}/cmd.Version={{.Version}}
-    - -X {% .CLI.Package %}/cmd.Commit={{.FullCommit}}
-    - -X {% .CLI.Package %}/cmd.BuildDate={{.Date}}
-    - -X {% .CLI.Package %}/cmd.GoVersion=go1.14
-    - -X {% .CLI.Package %}/cmd.BuildOS={{.Os}}
-    - -X {% .CLI.Package %}/cmd.BuildArch={{.Arch}}
-    - -X {% .CLI.Package %}/cmd.BuildArm={{.Arm}}
+    - -X {% .CLI.Package %}/verinfo.Version={{.Version}}
+    - -X {% .CLI.Package %}/verinfo.Commit={{.FullCommit}}
+    - -X {% .CLI.Package %}/verinfo.BuildDate={{.Date}}
+    - -X {% .CLI.Package %}/verinfo.GoVersion=go1.14
+    - -X {% .CLI.Package %}/verinfo.BuildOS={{.Os}}
+    - -X {% .CLI.Package %}/verinfo.BuildArch={{.Arch}}
+    - -X {% .CLI.Package %}/verinfo.BuildArm={{.Arm}}
 
   env:
   - CGO_ENABLED=0

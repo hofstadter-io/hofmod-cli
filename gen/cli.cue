@@ -79,6 +79,12 @@ import (
       }
     },
     {
+      if In.CLI.VersionCommand != _|_ {
+        TemplateName: "verinfo.go"
+        Filepath: "\(OutdirConfig.CliOutdir)/verinfo/verinfo.go"
+      }
+    },
+    {
       if In.CLI.Updates != _|_ {
         TemplateName: "update.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/update.go"
@@ -90,7 +96,12 @@ import (
         Filepath: "\(OutdirConfig.CmdOutdir)/completions.go"
       }
     },
-
+    {
+      if In.CLI.Telemetry != _|_ {
+        TemplateName: "ga.go"
+        Filepath: "\(OutdirConfig.CliOutdir)/ga/ga.go"
+      }
+    },
     {
       if In.CLI.Releases != _|_ {
         ( hof.#HofGeneratorFile & {
@@ -99,7 +110,6 @@ import (
         })
       }
     },
-
     {
       if In.CLI.Releases != _|_ {
         Template:  templates.DockerfileJessie
