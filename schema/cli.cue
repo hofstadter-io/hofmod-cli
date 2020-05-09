@@ -29,6 +29,7 @@ import (
   }
 
   Telemetry?: string
+  TelemetryIdDir: string | *".\(cliName)"
 
   // Debugging
   EnablePProf: bool | *false
