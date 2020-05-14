@@ -13,20 +13,27 @@ import (
 )
 
 func SendGaEvent(action, label string, value int) {
-	// Do something here to lookup / create
-	// cid := "13b3ad64-9154-11ea-9eba-47f617ab74f7"
+	if os.Getenv("{{ .CLI.CLI_NAME }}_TELEMETRY_DISABLED") != "" {
+		return
+	}
+
 	cid, err := readGaId()
 	if err != nil {
-		fmt.Println("Error", err)
 		cid = "unknown"
 	}
+
+	ua := fmt.Sprintf(
+		"%s/%s %s/%s",
+		"{{ .CLI.cliName }}", verinfo.Version,
+		verinfo.BuildOS, verinfo.BuildArch,
+	)
 
 	cfg := yagu.GaConfig{
 		TID: "{{ .CLI.Telemetry }}",
 		CID: cid,
-		UA: "{{ .CLI.cliName }}/" + verinfo.Version,
+		UA: ua,
 		CN: "{{ .CLI.cliName }}",
-		CS: "{{ .CLI.cliName }}",
+		CS: "{{ .CLI.cliName }}/" + verinfo.Version,
 		CM: verinfo.Version,
 	}
 
@@ -45,11 +52,15 @@ func SendGaEvent(action, label string, value int) {
 }
 
 func readGaId() (string, error) {
-	ucd := yagu.UserHomeDir()
+	// ucd := yagu.UserHomeDir()
+	ucd, err := os.UserConfigDir()
+	if err != nil {
+		return "", err
+	}
 	dir := filepath.Join(ucd, "{{ .CLI.TelemetryIdDir }}")
 	fn := filepath.Join(dir, ".uuid")
 
-	_, err := os.Lstat(fn)
+	_, err = os.Lstat(fn)
 	if err != nil {
 		// file does not exist, probably...
 		return writeGaId()
@@ -64,16 +75,17 @@ func readGaId() (string, error) {
 }
 
 func writeGaId() (string, error) {
-	// fmt.Println("writeGaId")
-	ucd := yagu.UserHomeDir()
 
-	dir := filepath.Join(ucd, "{{ .CLI.TelemetryIdDir }}")
-	err := yagu.Mkdir(dir)
+	ucd, err := os.UserConfigDir()
 	if err != nil {
 		return "", err
 	}
 
-	// fmt.Println("Mkdir:", dir)
+	dir := filepath.Join(ucd, "{{ .CLI.TelemetryIdDir }}")
+	err = yagu.Mkdir(dir)
+	if err != nil {
+		return "", err
+	}
 
 	fn := filepath.Join(dir, ".uuid")
 
@@ -81,8 +93,6 @@ func writeGaId() (string, error) {
 	if err != nil {
 		return id.String(), err
 	}
-
-	// fmt.Println("writeGaId: ", id.String())
 
 	err = ioutil.WriteFile(fn, []byte(id.String()), 0644)
 	if err != nil {

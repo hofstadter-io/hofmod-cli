@@ -52,7 +52,7 @@ var UpdateCmd = &cobra.Command{
 	Long: UpdateLong,
 
 	PreRun: func(cmd *cobra.Command, args []string) {
-		ga.SendGaEvent("update", strings.Join(args, "/"), 0)
+		ga.SendGaEvent("update", "<omit>", 0)
 	},
 
 	Run: func(cmd *cobra.Command, args []string) {

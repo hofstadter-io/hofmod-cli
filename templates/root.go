@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"os"
 	{{end}}
-	{{ if .CLI.Telemetry }}
-	"strings"
-	{{end}}
 
   "github.com/spf13/cobra"
   {{ if or .CLI.Flags .CLI.Pflags }}
@@ -121,7 +118,7 @@ var RootCmd = &cobra.Command{
 {{ if or .CLI.Prerun .CLI.Telemetry}}
   PreRun: func(cmd *cobra.Command, args []string) {
 		{{ if .CLI.Telemetry }}
-		ga.SendGaEvent("root", strings.Join(args, "/"), 0)
+		ga.SendGaEvent("root", "<omit>", 0)
 		{{ end }}
 
 		{{ if .CLI.Prerun}}
@@ -183,8 +180,7 @@ func init() {
 	hf := RootCmd.HelpFunc()
 	f := func (cmd *cobra.Command, args []string) {
 		if RootCmd.Name() == cmd.Name() {
-			as := strings.Join(args, "/")
-			ga.SendGaEvent("root/help", as, 0)
+			ga.SendGaEvent("root/help", "<omit>", 0)
 		}
 		hf(cmd, args)
 	}
