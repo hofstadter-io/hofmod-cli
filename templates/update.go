@@ -22,6 +22,7 @@ var UpdateLong = `Print the build version for {{ .CLI.cliName }}`
 
 var (
 	UpdateCheckFlag bool
+	UpdateVersionFlag string
 
 	UpdateStarted bool
 	UpdateErrored bool
@@ -32,10 +33,11 @@ var (
 
 func init() {
 	UpdateCmd.Flags().BoolVarP(&UpdateCheckFlag, "check", "", false, "set to only check for an update")
+	UpdateCmd.Flags().StringVarP(&UpdateVersionFlag, "version", "v", "", "the version to update to")
 }
 
 const updateMessage = `
-Updates available. v%s -> %s (latest)
+Updates available. v%s -> %s
 
   run '{{ .CLI.cliName }} update' to get the latest.
 
@@ -53,6 +55,7 @@ var UpdateCmd = &cobra.Command{
 
 	PreRun: func(cmd *cobra.Command, args []string) {
 		ga.SendGaEvent("update", "<omit>", 0)
+
 	},
 
 	Run: func(cmd *cobra.Command, args []string) {
@@ -65,7 +68,7 @@ var UpdateCmd = &cobra.Command{
 
 		// Semver Check?
 		cur := ProgramVersion{Version: "v" + verinfo.Version}
-		if latest.Version == cur.Version || cur.Version == "vLocal" {
+		if latest.Version == cur.Version || ( UpdateVersionFlag == "" && cur.Version == "vLocal" ) {
 			return
 		} else {
 			if UpdateCheckFlag {
@@ -73,7 +76,7 @@ var UpdateCmd = &cobra.Command{
 			}
 		}
 
-		err = InstallLatest()
+		err = InstallUpdate()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(-1)
@@ -99,12 +102,17 @@ func CheckUpdate(manual bool) (ver ProgramVersion, err error) {
 	UpdateStarted = true
 	cur := ProgramVersion{Version: "v" + verinfo.Version}
 
-	checkURL :="{{ .CLI.Releases.GitHub.Rel }}/latest"
+	checkURL := "{{ .CLI.Releases.GitHub.Rel }}/latest"
+	if UpdateVersionFlag != "" {
+		checkURL = "{{ .CLI.Releases.GitHub.Rel }}/tags/" + UpdateVersionFlag
+		manual = true
+	}
 
-	req := gorequest.New().Get(checkURL).
-		Query("current="+cur.Version).
-		Query("manual="+fmt.Sprint(manual))
-	resp, b, errs := req.EndBytes()
+	req := gorequest.New()
+	if os.Getenv("GITHUB_TOKEN") != "" {
+		req = req.SetBasicAuth("github-token", os.Getenv("GITHUB_TOKEN"))
+	}
+	resp, b, errs := req.Get(checkURL).EndBytes()
 	UpdateErrored = true
 
 	check := "http2: server sent GOAWAY and closed the connection"
@@ -118,6 +126,7 @@ func CheckUpdate(manual bool) (ver ProgramVersion, err error) {
 	}
 	if resp.StatusCode >= 400 {
 		if resp.StatusCode == 404 {
+			fmt.Println("404?!", checkURL)
 			return ver, fmt.Errorf("No releases available :[")
 		}
 		return ver, fmt.Errorf("Bad Request: " + string(b))
@@ -146,7 +155,7 @@ func CheckUpdate(manual bool) (ver ProgramVersion, err error) {
 		UpdateChecked = true
 
 		// Semver Check?
-		if ver.Version != cur.Version && cur.Version != "vLocal"{
+		if ver.Version != cur.Version && cur.Version != "vLocal" {
 			UpdateAvailable = &ver
 		}
 
@@ -157,7 +166,7 @@ func CheckUpdate(manual bool) (ver ProgramVersion, err error) {
 	UpdateChecked = true
 
 	// Semver Check?
-	if ver.Version != cur.Version && cur.Version != "vLocal"{
+	if ver.Version != cur.Version && (manual || cur.Version != "vLocal") {
 		UpdateAvailable = &ver
 		aI, ok := gh["assets"]
 		if ok {
@@ -184,7 +193,7 @@ func PrintUpdateAvailable() {
 	}
 }
 
-func InstallLatest() (err error) {
+func InstallUpdate() (err error) {
 	fmt.Printf("Installing {{ .CLI.cliName }}@%s\n", UpdateAvailable.Version)
 
 	if UpdateData == nil {
@@ -247,25 +256,29 @@ func InstallLatest() (err error) {
 
 	fmt.Println("Download URL: ", url, "\n")
 
-		switch verinfo.BuildOS {
-		case "linux":
-			fallthrough
-		case "darwin":
+	switch verinfo.BuildOS {
+	case "linux":
+		fallthrough
+	case "darwin":
 
-			return downloadAndInstall(url)
+		return downloadAndInstall(url)
 
-		case "windows":
-			fmt.Println("Please downlaod and install manually from the link above.\n")
-			return nil
-		}
+	case "windows":
+		fmt.Println("Please downlaod and install manually from the link above.\n")
+		return nil
+	}
 
 
 	return nil
 }
 
 func downloadAndInstall(url string) error {
-	req := gorequest.New().Get(url)
-	resp, content, errs := req.EndBytes()
+	req := gorequest.New()
+	if os.Getenv("GITHUB_TOKEN") != "" {
+		req = req.SetBasicAuth("github-token", os.Getenv("GITHUB_TOKEN"))
+	}
+
+	resp, content, errs := req.Get(url).EndBytes()
 
 	check := "http2: server sent GOAWAY and closed the connection"
 	if len(errs) != 0 && !strings.Contains(errs[0].Error(), check) {

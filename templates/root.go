@@ -64,8 +64,12 @@ func RootRun({{ template "lib-args.go" . -}}) (err error) {
 }
 {{ end }}
 
-{{ if .CLI.PersistentPostrun}}
+{{ if or .CLI.PersistentPostrun .CLI.Updates}}
 func RootPersistentPostRun({{- template "lib-args.go" . -}}) (err error) {
+
+	{{ if .CLI.Updates }}
+	PrintUpdateAvailable()
+	{{ end }}
 
 	{{ if .CLI.PersistentPostrunBody}}
 	{{ .CLI.PersistentPostrunBody}}
@@ -147,7 +151,7 @@ var RootCmd = &cobra.Command{
   },
   {{ end }}
 
-  {{ if .CLI.PersistentPostrun}}
+  {{ if or .CLI.PersistentPostrun .CLI.Updates }}
   PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		var err error
     {{ template "args-parse" .CLI.Args }}
@@ -160,7 +164,7 @@ var RootCmd = &cobra.Command{
   },
   {{ end }}
 
-  {{ if .CLI.Postrun}}
+  {{ if .CLI.Postrun }}
   PostRun: func(cmd *cobra.Command, args []string) {
 		var err error
     {{ template "args-parse" .CLI.Args }}
