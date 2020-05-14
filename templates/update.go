@@ -84,9 +84,7 @@ var UpdateCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(UpdateCmd)
 
-	{{ if not .CLI.Updates.Disabled }}
 	go CheckUpdate(false)
-	{{ end }}
 }
 
 type ProgramVersion struct {

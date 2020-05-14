@@ -19,14 +19,7 @@ import (
 
   ConfigDir: string | *"\(cliName)"
 
-  Updates?: {
-    _Releases: Releases // To require releases when updates are enabled?
-    CheckURL: string
-    DevCheckURL: string
-    AvailableVersions: [...string]
-
-    CheckingDisabled: bool | *false
-  }
+  Updates: bool | *true
 
   Telemetry?: string
   TelemetryIdDir: string | *".\(cliName)"
