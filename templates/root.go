@@ -68,7 +68,7 @@ func RootRun({{ template "lib-args.go" . -}}) (err error) {
 func RootPersistentPostRun({{- template "lib-args.go" . -}}) (err error) {
 
 	{{ if .CLI.Updates }}
-	PrintUpdateAvailable()
+	WaitPrintUpdateAvailable()
 	{{ end }}
 
 	{{ if .CLI.PersistentPostrunBody}}
