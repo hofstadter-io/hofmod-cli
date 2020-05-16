@@ -207,19 +207,51 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
   {{ end }}
 }
 
-{{if .CMD.Commands}}
 func init() {
-	hf := {{ $.CMD.CmdName }}Cmd.HelpFunc()
-	f := func (cmd *cobra.Command, args []string) {
+	{{ if .CMD.CustomHelp }}
+	help := func (cmd *cobra.Command, args []string) {
+		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
+		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
+		fmt.Println(ch)
+	}
+	usage := func (cmd *cobra.Command) error {
+		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
+		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
+		fmt.Println(ch)
+		return fmt.Errorf("unknown HOF command")
+	}
+	{{ else }}
+	help := {{ $.CMD.CmdName }}Cmd.HelpFunc()
+	usage := {{ $.CMD.CmdName }}Cmd.UsageFunc()
+	{{ end }}
+
+	{{ if .CLI.Telemetry }}
+	thelp := func (cmd *cobra.Command, args []string) {
 		cs := strings.Fields(cmd.CommandPath())
 		c := strings.Join(cs[1:], "/")
 		ga.SendGaEvent(c + "/help", "<omit>", 0)
-		hf(cmd, args)
+		help(cmd, args)
 	}
-	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(f)
+	tusage := func (cmd *cobra.Command) error {
+		cs := strings.Fields(cmd.CommandPath())
+		c := strings.Join(cs[1:], "/")
+		ga.SendGaEvent(c + "/help", "<omit>", 0)
+		return usage(cmd)
+	}
+	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(thelp)
+	{{ $.CMD.CmdName }}Cmd.SetUsageFunc(tusage)
+	{{ else }}
+	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(help)
+	{{ $.CMD.CmdName }}Cmd.SetUsageFunc(usage)
+	{{ end }}
 
-	{{- range $i, $C := .CMD.Commands }}
+{{if .CMD.Commands}}
+  {{- range $i, $C := .CMD.Commands }}
   {{ $.CMD.CmdName }}Cmd.AddCommand(cmd{{ $.CMD.cmdName }}.{{ $C.CmdName }}Cmd)
-	{{- end}}
+  {{- end}}
+{{ end }}
 }
+
+{{ if .CMD.CustomHelp }}
+const {{ $.CMD.CmdName }}CustomHelp = `{{ .CMD.CustomHelp }}`
 {{ end }}
