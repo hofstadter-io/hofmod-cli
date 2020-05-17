@@ -4,22 +4,30 @@ import (
 	"fmt"
 	"os"
 
-  {{ if .CLI.EnablePProf }}
-  "log"
+	{{ if .CLI.EnablePProf }}
+	"log"
 	"runtime/pprof"
-  {{end}}
+	{{end}}
 
 	"{{ .CLI.Package }}/cmd"
 )
 
 func main() {
 	{{ if .CLI.EnablePProf }}
-	f, err := os.Create("hof-cpu.prof")
-	if err != nil {
-			log.Fatal(err)
+	if fn := os.Getenv("{{.CLI.CLI_NAME}}_CPU_PROFILE"); fn != "" {
+		f, err := os.Create(fn)
+		if err != nil {
+			log.Fatal("Could not create file for CPU profile:", err)
+		}
+		defer f.Close()
+
+		err = pprof.StartCPUProfile(f)
+		if err != nil {
+			log.Fatal("Could not start CPU profile process:", err)
+		}
+
+		defer pprof.StopCPUProfile()
 	}
-	pprof.StartCPUProfile(f)
-	defer pprof.StopCPUProfile()
 	{{ end }}
 
 	if err := cmd.RootCmd.Execute(); err != nil {
