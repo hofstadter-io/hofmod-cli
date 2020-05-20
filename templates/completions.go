@@ -6,11 +6,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	CompletionVanillaFlag bool
+)
+
+func init() {
+	CompletionCmd.Flags().BoolVarP(&CompletionVanillaFlag, "vanilla", "8", false, "set to only check for an update")
+}
+
+
 var CompletionCmd = &cobra.Command{
 	Use: "completion",
 	Aliases: []string{ "completions" },
-	Short: "Generate completion helpers for your terminal",
-	Long: "Generate completion helpers for your terminal",
+	Short: "Generate completion helpers for popular terminals",
+	Long: "Generate completion helpers for popular terminals",
 }
 
 var BashCompletionLong = `Generate Bash completions
@@ -49,7 +58,7 @@ var FishCompletionCmd = &cobra.Command{
 	Long:  "Generate Fish completions",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		RootCmd.GenZshCompletion(os.Stdout)
+		RootCmd.GenFishCompletion(os.Stdout, true)
 	},
 }
 

@@ -181,13 +181,13 @@ var RootCmd = &cobra.Command{
   {{ end }}
 }
 
-func init() {
+func RootInit() {
 	{{ if .CLI.CustomHelp }}
 	help := func (cmd *cobra.Command, args []string) {
 		fu := RootCmd.Flags().FlagUsages()
 		rh := strings.Replace(RootCustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(rh)
-		fmt.Println("hof", args)
+		fmt.Println(cmd.Name(), "hof", args)
 	}
 	usage := func(cmd *cobra.Command) error {
 		fu := RootCmd.Flags().FlagUsages()

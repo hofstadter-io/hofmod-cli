@@ -5,6 +5,11 @@ package cmd
 {{ end }}
 
 import (
+	{{ if .CMD.CustomHelp }}
+	{{ if not .CMD.HasAnyRun }}
+	"fmt"
+	{{end}}
+	{{end}}
 	{{ if .CMD.HasAnyRun }}
 	"fmt"
 	"os"
@@ -79,6 +84,9 @@ func {{ .CMD.CmdName }}Run({{ template "lib-args.go" . -}}) (err error) {
 
 	{{ if .CMD.Body}}
 	{{ .CMD.Body}}
+	{{ else }}
+	// you can safely comment this print out
+	fmt.Println("not implemented")
 	{{ end }}
 
 	return err
@@ -213,12 +221,18 @@ func init() {
 		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
 		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(ch)
+		{{ if .CMD.TBD }}
+		fmt.Println("\ntbd: {{ .CMD.TBD }}")
+		{{ end }}
 	}
 	usage := func (cmd *cobra.Command) error {
 		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
 		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(ch)
-		return fmt.Errorf("unknown HOF command")
+		{{ if .CMD.TBD }}
+		fmt.Println("\ntbd: {{ .CMD.TBD }}")
+		{{ end }}
+		return fmt.Errorf("unknown command %q", cmd.Name())
 	}
 	{{ else }}
 	help := {{ $.CMD.CmdName }}Cmd.HelpFunc()
