@@ -221,16 +221,16 @@ func init() {
 		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
 		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(ch)
-		{{ if .CMD.TBD }}
-		fmt.Println("\ntbd: {{ .CMD.TBD }}")
+		{{ if .CMD.TBDLong }}
+		fmt.Println("\nstatus: {{ .CMD.TBDLong }}")
 		{{ end }}
 	}
 	usage := func (cmd *cobra.Command) error {
 		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
 		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(ch)
-		{{ if .CMD.TBD }}
-		fmt.Println("\ntbd: {{ .CMD.TBD }}")
+		{{ if .CMD.TBDLong }}
+		fmt.Println("\nstatus: {{ .CMD.TBDLong }}")
 		{{ end }}
 		return fmt.Errorf("unknown command %q", cmd.Name())
 	}
@@ -249,7 +249,7 @@ func init() {
 	tusage := func (cmd *cobra.Command) error {
 		cs := strings.Fields(cmd.CommandPath())
 		c := strings.Join(cs[1:], "/")
-		ga.SendGaEvent(c + "/help", "<omit>", 0)
+		ga.SendGaEvent(c + "/usage", "<omit>", 0)
 		return usage(cmd)
 	}
 	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(thelp)

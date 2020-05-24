@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"{{ .CLI.Package }}/ga"
 	"{{ .CLI.Package }}/verinfo"
 )
 
@@ -17,6 +18,12 @@ Commit:      %s
 BuildDate:   %s
 GoVersion:   %s
 OS / Arch:   %s %s
+
+{{ with .CLI.Releases }}
+Author:   {{ .Author }}
+Homepage: {{ .Homepage }}
+GitHub:   {{ .GitHub.URL }}
+{{ end }}
 `
 
 var VersionLong = `Print the build version for {{ .CLI.cliName }}`
@@ -52,5 +59,26 @@ var VersionCmd = &cobra.Command{
 }
 
 func init() {
-	RootCmd.AddCommand(VersionCmd)
+	help := VersionCmd.HelpFunc()
+	usage := VersionCmd.UsageFunc()
+
+	{{ if .CLI.Telemetry }}
+	thelp := func (cmd *cobra.Command, args []string) {
+		if VersionCmd.Name() == cmd.Name() {
+			ga.SendGaEvent("version/help", "<omit>", 0)
+		}
+		help(cmd, args)
+	}
+	tusage := func (cmd *cobra.Command) error {
+		if VersionCmd.Name() == cmd.Name() {
+			ga.SendGaEvent("version/help", "<omit>", 0)
+		}
+		return usage(cmd)
+	}
+	VersionCmd.SetHelpFunc(thelp)
+	VersionCmd.SetUsageFunc(tusage)
+	{{ else }}
+	VersionCmd.SetHelpFunc(help)
+	VersionCmd.SetUsageFunc(usage)
+	{{ end }}
 }

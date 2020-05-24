@@ -9,12 +9,12 @@ import "text/template"
 
 #Common: {
   Name:     string
-  Usage:    string | Name
-  Short:    string
-  Long:     string | Short
+  Usage:    string | *Name
+  Short:    string 
+  Long:     string | *Short
 	TBD:      string | *""
 
-	Help: template.Execute("{{ printf \"%s%-13s %s\" .tbd .name .short }}", { tbd: TBD, name: Name, short: Short })
+	Help: template.Execute("{{ printf \"%-15s %-5s %s\" .name .tbd .short }}", { tbd: TBD, name: Name, short: Short })
 	CustomHelp?: string
 
   PersistentPrerun:   bool | *false

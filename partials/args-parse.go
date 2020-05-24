@@ -4,7 +4,7 @@
 {{ range $i, $A := $ARGS }}
 {{ if $A.Required }}
 if {{ $i }} >= len(args) {
-  fmt.Println("missing required argument: '{{$A.ArgName}}'")
+  fmt.Println("missing required argument: '{{$A.argName}}'")
   cmd.Usage()
   os.Exit(1)
 }

@@ -209,7 +209,7 @@ func RootInit() {
 	}
 	tusage := func (cmd *cobra.Command) error {
 		if RootCmd.Name() == cmd.Name() {
-			ga.SendGaEvent("root/help", "<omit>", 0)
+			ga.SendGaEvent("root/usage", "<omit>", 0)
 		}
 		return usage(cmd)
 	}
@@ -221,7 +221,15 @@ func RootInit() {
 	{{ end }}
 
 
-	// cobra.OnInitialize(initConfig)
+{{if .CLI.Updates}}
+	RootCmd.AddCommand(UpdateCmd)
+{{end}}
+{{if .CLI.VersionCommand}}
+	RootCmd.AddCommand(VersionCmd)
+{{end}}
+{{if .CLI.CompletionCommands}}
+	RootCmd.AddCommand(CompletionCmd)
+{{end}}
 
 {{if .CLI.Commands}}
 	{{range $i, $C := .CLI.Commands }}

@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"{{ .CLI.Package }}/ga"
 )
 
 var (
@@ -79,5 +81,26 @@ func init() {
 	CompletionCmd.AddCommand(FishCompletionCmd)
 	CompletionCmd.AddCommand(PowerShellCompletionCmd)
 
-	RootCmd.AddCommand(CompletionCmd)
+	help := CompletionCmd.HelpFunc()
+	usage := CompletionCmd.UsageFunc()
+
+	{{ if .CLI.Telemetry }}
+	thelp := func (cmd *cobra.Command, args []string) {
+		if CompletionCmd.Name() == cmd.Name() {
+			ga.SendGaEvent("completion/help", "<omit>", 0)
+		}
+		help(cmd, args)
+	}
+	tusage := func (cmd *cobra.Command) error {
+		if CompletionCmd.Name() == cmd.Name() {
+			ga.SendGaEvent("completion/usage", "<omit>", 0)
+		}
+		return usage(cmd)
+	}
+	CompletionCmd.SetHelpFunc(thelp)
+	CompletionCmd.SetUsageFunc(tusage)
+	{{ else }}
+	CompletionCmd.SetHelpFunc(help)
+	CompletionCmd.SetUsageFunc(usage)
+	{{ end }}
 }

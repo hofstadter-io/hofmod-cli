@@ -5,6 +5,7 @@ import (
 )
 
 #ArgType:
+  "[]string"  |
   "string"  |
   "int"
 
