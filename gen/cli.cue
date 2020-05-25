@@ -17,7 +17,7 @@ import (
     CiOutdir: string | *"\(Outdir)/ci/\(In.CLI.cliName)"
     CliOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)"
     CmdOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)/cmd"
-    PflagOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)/pflags"
+    FlagsOutdir: string | *"\(Outdir)/cmd/\(In.CLI.cliName)/flags"
   }
 
   // Internal
@@ -69,8 +69,8 @@ import (
       Filepath: "\(OutdirConfig.CmdOutdir)/root.go"
     },
     {
-      TemplateName: "pflags.go"
-      Filepath: "\(OutdirConfig.PflagOutdir)/root.go"
+      TemplateName: "flags.go"
+      Filepath: "\(OutdirConfig.FlagsOutdir)/root.go"
     },
     {
       if In.CLI.VersionCommand != _|_ {
@@ -200,22 +200,22 @@ import (
 
   // Persistent Flags
   _S1_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in Cli.Commands if C.Pflags != _|_
+    for _, C in Cli.Commands if C.Pflags != _|_ || C.Flags != _|_
     {
       In: {
         // CLI
         CMD: {
           C
-          PackageName: "pflags"
+          PackageName: "flags"
         }
       }
       TemplateName: "flags.go"
-      Filepath: "\(OutdirConfig.LibOutdir)/\(In.CMD.Name).go"
+      Filepath: "\(OutdirConfig.FlagsOutdir)/\(In.CMD.Name).go"
     }
   ]
 
   _S2F: [ for P in _S1_Flags if len(P.In.CMD.Commands) > 0 {
-    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name } }]
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name } }]
   }]
   _S2_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
     for _, C in list.FlattenN(_S2F, 1)
@@ -223,16 +223,16 @@ import (
       In: {
         CMD: {
           C
-          PackageName: "pflags"
+          PackageName: "flags"
         }
       }
-      TemplateName: "pflags.go"
-      Filepath: "\(OutdirConfig.PflagsOutdir)/\(C.Parent.Name)__\(C.Name).go"
+      TemplateName: "flags.go"
+      Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Name)__\(C.Name).go"
     }
   ]
 
   _S3F: [ for P in _S2_Flags if len(P.In.CMD.Commands) > 0 {
-    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
   _S3_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
     for _, C in list.FlattenN(_S3F, 1)
@@ -240,16 +240,16 @@ import (
       In: {
         CMD: {
           C
-          PackageName: "pflags"
+          PackageName: "flags"
         }
       }
-      TemplateName: "pflags.go"
-      Filepath: "\(OutdirConfig.LibOutdir)/\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
+      TemplateName: "flags.go"
+      Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
   ]
 
   _S4F: [ for P in _S3_Flags if len(P.In.CMD.Commands) > 0 {
-    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
   _S4_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
     for _, C in list.FlattenN(_S4F, 1)
@@ -257,16 +257,16 @@ import (
       In: {
         CMD: {
           C
-          PackageName: "pflags"
+          PackageName: "flags"
         }
       }
-      TemplateName: "pflags.go"
-      Filepath: "\(OutdirConfig.LibOutdir)/\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
+      TemplateName: "flags.go"
+      Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
   ]
 
   _S5F: [ for P in _S4_Flags if len(P.In.CMD.Commands) > 0 {
-    [ for C in P.In.CMD.Commands if C.Pflags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
+    [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
   _S5_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
     for _, C in list.FlattenN(_S5F, 1)
@@ -274,11 +274,11 @@ import (
       In: {
         CMD: {
           C
-          PackageName: "pflags"
+          PackageName: "flags"
         }
       }
-      TemplateName: "pflags.go"
-      Filepath: "\(OutdirConfig.LibOutdir)/\(C.Parent.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
+      TemplateName: "flags.go"
+      Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
   ]
 }

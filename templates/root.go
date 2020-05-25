@@ -23,8 +23,8 @@ import (
 	{{ if .CLI.Telemetry }}
 	"{{ .CLI.Package }}/ga"
 	{{end}}
-	{{ if .CLI.Pflags }}
-	"{{ .CLI.Package }}/pflags"
+	{{ if or .CLI.Flags .CLI.Pflags }}
+	"{{ .CLI.Package }}/flags"
 	{{ end }}
 )
 
@@ -32,7 +32,6 @@ import (
 var {{ .CLI.Name }}Long = `{{ .CLI.Long }}`
 {{ end }}
 
-{{ template "flag-vars" .CLI }}
 {{ template "flag-init" .CLI }}
 {{ template "pflag-init" .CLI }}
 

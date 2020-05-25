@@ -46,8 +46,8 @@ import (
 	{{ if .CLI.Telemetry }}
 	"{{ .CLI.Package }}/ga"
 	{{end}}
-	{{ if .CMD.Pflags }}
-	"{{ .CLI.Package }}/pflags"
+	{{ if or .CMD.Flags .CMD.Pflags }}
+	"{{ .CLI.Package }}/flags"
 	{{ end }}
 )
 
@@ -55,9 +55,8 @@ import (
 var {{ .CMD.Name }}Long = `{{ .CMD.Long }}`
 {{ end }}
 
-{{ template "flag-vars" .CMD }}
-{{ template "flag-init" .CMD }}
 {{ template "pflag-init" .CMD }}
+{{ template "flag-init" .CMD }}
 
 {{ if .CMD.PersistentPrerun }}
 func {{ .CMD.CmdName }}PersistentPreRun({{- template "lib-args.go" . -}}) (err error) {

@@ -1,5 +1,5 @@
 {{ define "pflag-init" }}
-{{ if or $.Pflags $.Flags}}
+{{ if $.Pflags}}
 
 {{ $Prefix := "Root" }}
 {{ if $.Parent.Parent.Parent.Parent }}
@@ -16,7 +16,7 @@
 
 func init () {
   {{ range $i, $F := $.Pflags }}
-	{{ $Prefix }}Cmd.PersistentFlags().{{- template "cobra-type" $F.Type -}}VarP(&pflags.{{ $Prefix }}{{ $F.FlagName }}Pflag, "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
+	{{ $Prefix }}Cmd.PersistentFlags().{{- template "cobra-type" $F.Type -}}VarP(&flags.{{ $Prefix }}{{ $F.FlagName }}Pflag, "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
   {{- end }}
 }
 {{ end }}
