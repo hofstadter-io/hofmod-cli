@@ -27,7 +27,10 @@ CLI should look like? Redesign, regenerate, and keep adding you custom code.
 
 ### Usage
 
-You'll need the [hof](https://github.com/hofstadter-io/hof) tool installed. Let's start a new project:
+You'll need the [hof](https://github.com/hofstadter-io/hof) tool installed.
+You can download `hof` from [the releases page](https://github.com/hofstadter-io/hof/releases).
+
+Let's start a new project:
 
 ```
 # Start a project
