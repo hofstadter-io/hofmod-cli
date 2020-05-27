@@ -1,4 +1,4 @@
-# hofmod-clii
+# hofmod-cli
 
 A [hof](https://github.com/hofstadter-io/hof) generator for creating advanced Golang CLIs.
 
