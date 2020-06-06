@@ -1,0 +1,13 @@
+### Test "{{ .CLI.cliName }} --help" prints help
+call __{{ .CLI.cliName }} --help
+
+### Test "{{ .CLI.cliName }} -h" prints help
+call __{{ .CLI.cliName }} -h
+
+### Test "{{ .CLI.cliName }} help" prints help
+call __{{ .CLI.cliName }} help
+
+{{ if .CLI.OmitRun }}
+### Test "{{ .CLI.cliName }}" (without any args) prints help
+call __{{ .CLI.cliName }}
+{{end}}

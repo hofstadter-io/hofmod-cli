@@ -1,0 +1,10 @@
+### Test "{{ .CMD.cmdName }} --help" prints help
+call __{{ .CLI.cliName }} {{ template "test-cli-args.txt" . }} --help
+
+### Test "{{ .CMD.cmdName }} -h" prints help
+call __{{ .CLI.cliName }} {{ template "test-cli-args.txt" . }} -h
+
+{{ if .CMD.OmitRun -}}
+### Test "{{ .CMD.cmdName }}" (without any args) prints help
+call __{{ .CLI.cliName }} {{ template "test-cli-args.txt" . }}
+{{end}}

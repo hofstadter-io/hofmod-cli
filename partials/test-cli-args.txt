@@ -1,0 +1,16 @@
+{{- if .CMD.Commands -}}
+{{- if .CMD.Parent.Parent.Parent.Parent -}}
+{{- .CMD.Parent.Parent.Parent.Parent.Name }} {{ .CMD.Parent.Parent.Parent.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Name }} {{ .CMD.cmdName -}}
+{{- else if .CMD.Parent.Parent.Parent -}}
+{{- .CMD.Parent.Parent.Parent.Name }} {{ .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Name }} {{ .CMD.cmdName -}}
+{{- else if .CMD.Parent.Parent -}}
+{{- .CMD.Parent.Parent.Name }} {{ .CMD.Parent.Name }} {{ .CMD.cmdName -}}
+{{- else if .CMD.Parent -}}
+{{- .CMD.Parent.Name }} {{ .CMD.cmdName -}}
+{{- else -}}
+{{- .CMD.cmdName -}}
+{{- end -}}
+{{- else -}}
+{{- .CMD.cmdName -}}
+{{- end -}}
+

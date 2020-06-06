@@ -1,18 +1,18 @@
 package cmd
 
 import (
-	{{ if .CLI.HasAnyRun }}
 	"fmt"
 	"os"
-	{{ end }}
+	{{ if .CLI.EnablePProf }}
+	"log"
+	"runtime/pprof"
+	{{end}}
 	{{ if .CLI.CustomHelp }}
 	"strings"
 	{{ end }}
 
-  "github.com/spf13/cobra"
-  {{ if or .CLI.Flags .CLI.Pflags }}
-  // "github.com/spf13/viper"
-  {{ end }}
+	"github.com/rogpeppe/go-internal/testscript"
+	"github.com/spf13/cobra"
 
 	{{ if .CLI.Imports }}
 	{{ range $i, $I := .CLI.Imports }}
@@ -192,7 +192,7 @@ func RootInit() {
 		fu := RootCmd.Flags().FlagUsages()
 		rh := strings.Replace(RootCustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(rh)
-		return fmt.Errorf("unknown HOF command")
+		return fmt.Errorf("unknown {{ .CLI.cliName }} command")
 	}
 	{{ else }}
 	help := RootCmd.HelpFunc()
@@ -240,3 +240,49 @@ func RootInit() {
 {{ if .CLI.CustomHelp }}
 const RootCustomHelp = `{{ .CLI.CustomHelp }}`
 {{ end }}
+
+func RunExit() {
+	if err := RunErr(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
+
+func RunInt() int {
+	if err := RunErr(); err != nil {
+		fmt.Println(err)
+		return 1
+	}
+	return 0
+}
+
+func RunErr() error {
+	{{ if .CLI.EnablePProf }}
+	if fn := os.Getenv("{{.CLI.CLI_NAME}}_CPU_PROFILE"); fn != "" {
+		f, err := os.Create(fn)
+		if err != nil {
+			log.Fatal("Could not create file for CPU profile:", err)
+		}
+		defer f.Close()
+
+		err = pprof.StartCPUProfile(f)
+		if err != nil {
+			log.Fatal("Could not start CPU profile process:", err)
+		}
+
+		defer pprof.StopCPUProfile()
+	}
+	{{ end }}
+
+	RootInit()
+	return RootCmd.Execute()
+}
+
+func CallTS(ts* testscript.TestScript, args[]string) error {
+	RootCmd.SetArgs(args)
+
+	err := RootCmd.Execute()
+	ts.Check(err)
+
+	return err
+}

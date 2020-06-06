@@ -69,6 +69,14 @@ import (
       Filepath: "\(OutdirConfig.CmdOutdir)/root.go"
     },
     {
+      TemplateName: "root_test.go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/root_test.go"
+    },
+    {
+      TemplateName: "testscripts/cli/root_help.txt"
+      Filepath: "\(OutdirConfig.CmdOutdir)/testscripts/cli/root/help.txt"
+    },
+    {
       TemplateName: "flags.go"
       Filepath: "\(OutdirConfig.FlagsOutdir)/root.go"
     },
@@ -126,11 +134,10 @@ import (
   ]
 
   // Sub command tree
-  _S1_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+  _S1_Cmds: [...hof.#HofGeneratorFile] & list.FlattenN([[
     for _, C in Cli.Commands
     {
       In: {
-        // CLI
         CMD: {
           C
           PackageName: "cmd"
@@ -138,8 +145,29 @@ import (
       }
       TemplateName: "cmd.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/\(In.CMD.Name).go"
-    }
-  ]
+		}
+	], [
+    for _, C in Cli.Commands if C.OmitTests == _|_
+	  {
+      In: {
+        CMD: {
+          C
+          PackageName: "cmd"
+        }
+      }
+      TemplateName: "cmd_test.go"
+      Filepath: "\(OutdirConfig.CmdOutdir)/\(In.CMD.Name)_test.go"
+		}
+	], [
+    for _, C in Cli.Commands if C.OmitTests == _|_
+	  {
+      In: {
+        CMD: C
+      }
+      TemplateName: "testscripts/cli/cmd_help.txt"
+      Filepath: "\(OutdirConfig.CmdOutdir)/testscripts/cli/\(In.CMD.cmdName)/help.txt"
+		}
+	]], 1)
 
   _S2C: [ for P in _S1_Cmds if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name } }]
