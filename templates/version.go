@@ -65,13 +65,13 @@ func init() {
 	{{ if .CLI.Telemetry }}
 	thelp := func (cmd *cobra.Command, args []string) {
 		if VersionCmd.Name() == cmd.Name() {
-			ga.SendGaEvent("version/help", "<omit>", 0)
+			ga.SendCommandPath("version help")
 		}
 		help(cmd, args)
 	}
 	tusage := func (cmd *cobra.Command) error {
 		if VersionCmd.Name() == cmd.Name() {
-			ga.SendGaEvent("version/help", "<omit>", 0)
+			ga.SendCommandPath("version usage")
 		}
 		return usage(cmd)
 	}

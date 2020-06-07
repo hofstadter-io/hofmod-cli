@@ -14,14 +14,8 @@ import (
 	"fmt"
 	"os"
 	{{end}}
-	{{ if .CLI.Telemetry }}
-	"strings"
-	{{end}}
 
   "github.com/spf13/cobra"
-  {{ if or .CMD.Flags .CMD.Pflags }}
-  "github.com/spf13/viper"
-  {{ end }}
 
 	{{ if .CMD.Imports }}
 	{{ range $i, $I := .CMD.Imports }}
@@ -156,9 +150,7 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 {{ if or .CMD.Prerun .CLI.Telemetry}}
   PreRun: func(cmd *cobra.Command, args []string) {
 		{{ if .CLI.Telemetry }}
-		cs := strings.Fields(cmd.CommandPath())
-		c := strings.Join(cs[1:], "/")
-		ga.SendGaEvent(c, "", 0)
+		ga.SendCommandPath(cmd.CommandPath())
 		{{ end }}
 
 		{{ if .CMD.Prerun}}
@@ -240,15 +232,11 @@ func init() {
 
 	{{ if .CLI.Telemetry }}
 	thelp := func (cmd *cobra.Command, args []string) {
-		cs := strings.Fields(cmd.CommandPath())
-		c := strings.Join(cs[1:], "/")
-		ga.SendGaEvent(c + "/help", "", 0)
+		ga.SendCommandPath(cmd.CommandPath() + " help")
 		help(cmd, args)
 	}
 	tusage := func (cmd *cobra.Command) error {
-		cs := strings.Fields(cmd.CommandPath())
-		c := strings.Join(cs[1:], "/")
-		ga.SendGaEvent(c + "/usage", "", 0)
+		ga.SendCommandPath(cmd.CommandPath() + " usage")
 		return usage(cmd)
 	}
 	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(thelp)
