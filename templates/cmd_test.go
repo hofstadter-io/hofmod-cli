@@ -7,7 +7,7 @@ package cmd_test
 import (
 	"testing"
 
-	"github.com/hofstadter-io/hof/lib/gotils/testscript"
+	"github.com/hofstadter-io/hof/script"
 	"github.com/hofstadter-io/hof/lib/yagu"
 
 	{{ if .CMD.Commands }}
@@ -49,18 +49,18 @@ func TestScript{{ .CMD.CmdName }}CliTests(t *testing.T) {
 	workdir := ".workdir/cli/" + dir
 	yagu.Mkdir(workdir)
 
-	testscript.Run(t, testscript.Params{
-		Setup: func (env *testscript.Env) error {
+	script.Run(t, script.Params{
+		Setup: func (env *script.Env) error {
 			// add any environment variables for your tests here
 			{{ if .CLI.Telemetry }}
 			env.Vars = append(env.Vars, "{{ .CLI.CLI_NAME }}_TELEMETRY_DISABLED=1")
 			{{ end }}
 			return nil
 		},
-		Funcs: map[string] func (ts* testscript.TestScript, args[]string) error {
+		Funcs: map[string] func (ts* script.Script, args[]string) error {
 			"__{{ .CLI.cliName }}": cmd.CallTS,
 		},
-		Dir: "testscripts/cli/{{.CMD.cmdName}}",
+		Dir: "hls/cli/{{.CMD.cmdName}}",
 		WorkdirRoot: workdir,
 	})
 }

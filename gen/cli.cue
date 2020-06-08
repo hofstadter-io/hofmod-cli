@@ -73,8 +73,8 @@ import (
       Filepath: "\(OutdirConfig.CmdOutdir)/root_test.go"
     },
     {
-      TemplateName: "testscripts/cli/root_help.txt"
-      Filepath: "\(OutdirConfig.CmdOutdir)/testscripts/cli/root/help.txt"
+      TemplateName: "hls/cli/root_help.hls"
+      Filepath: "\(OutdirConfig.CmdOutdir)/hls/cli/root/help.hls"
     },
     {
       TemplateName: "flags.go"
@@ -164,8 +164,8 @@ import (
       In: {
         CMD: C
       }
-      TemplateName: "testscripts/cli/cmd_help.txt"
-      Filepath: "\(OutdirConfig.CmdOutdir)/testscripts/cli/\(In.CMD.cmdName)/help.txt"
+      TemplateName: "hls/cli/cmd_help.hls"
+      Filepath: "\(OutdirConfig.CmdOutdir)/hls/cli/\(In.CMD.cmdName)/help.hls"
 		}
 	]], 1)
 
