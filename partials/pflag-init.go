@@ -16,7 +16,7 @@
 
 func init () {
   {{ range $i, $F := $.Pflags }}
-	{{ $Prefix }}Cmd.PersistentFlags().{{- template "cobra-type" $F.Type -}}VarP(&flags.{{ $Prefix }}{{ $F.FlagName }}Pflag, "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
+	{{ $Prefix }}Cmd.PersistentFlags().{{- template "cobra-type" $F.Type -}}VarP(&(flags.{{ $Prefix }}Pflags.{{ $F.FlagName }}), "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
   {{- end }}
 }
 {{ end }}

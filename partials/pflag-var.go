@@ -14,10 +14,12 @@
   {{ $Prefix = $.CmdName }}
 {{ end }}
 
-var (
-  {{ range $i, $P := $.Pflags }}
-  {{ $Prefix }}{{ $P.FlagName }}Pflag {{ $P.Type }}
+type {{ $Prefix }}Pflagpole struct {
+  {{ range $i, $F := $.Pflags }}
+  {{ $F.FlagName }} {{ $F.Type }}
   {{- end }}
-)
+}
+
+var {{ $Prefix }}Pflags {{ $Prefix }}Pflagpole
 {{ end }}
 {{ end }}
