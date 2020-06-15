@@ -256,3 +256,27 @@ func init() {
 {{ if .CMD.CustomHelp }}
 const {{ $.CMD.CmdName }}CustomHelp = `{{ .CMD.CustomHelp }}`
 {{ end }}
+
+{{ if .CMD.Topics }}
+var {{ .CMD.CmdName }}Topics = map[string]string {
+  {{- range $k, $v := .CMD.Topics }}
+  "{{ $k }}": `{{ replace $v "`" "¡" -1 }}`,
+  {{- end}}
+}
+{{ end }}
+
+{{ if .CMD.Examples }}
+var {{ .CMD.CmdName }}Examples = map[string]string {
+  {{- range $k, $v := .CMD.Examples }}
+  "{{ $k }}": `{{ replace $v "`" "¡" -1 }}`,
+  {{- end}}
+}
+{{ end }}
+
+{{ if .CMD.Tutorials }}
+var {{ .CMD.CmdName }}Tutorials = map[string]string {
+  {{- range $k, $v := .CMD.Tutorials }}
+  "{{ $k }}": `{{ replace $v "`" "¡" -1 }}`,
+  {{- end}}
+}
+{{ end }}

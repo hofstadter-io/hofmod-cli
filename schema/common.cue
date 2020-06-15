@@ -41,6 +41,10 @@ import "text/template"
   Args?:     [...#Arg]
   Commands:  [...#Command] | *[]
 
+	Topics:    [string]: string
+	Examples:  [string]: string
+	Tutorials: [string]: string
+
   ...
 }
 

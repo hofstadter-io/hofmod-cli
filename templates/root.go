@@ -11,7 +11,7 @@ import (
 	"strings"
 	{{ end }}
 
-	"github.com/hofstadter-io/hof/script"
+	"github.com/hofstadter-io/hof/script/runtime"
 	"github.com/spf13/cobra"
 
 	{{ if .CLI.Imports }}
@@ -237,10 +237,6 @@ func RootInit() {
 {{ end }}
 }
 
-{{ if .CLI.CustomHelp }}
-const RootCustomHelp = `{{ .CLI.CustomHelp }}`
-{{ end }}
-
 func RunExit() {
 	if err := RunErr(); err != nil {
 		fmt.Println(err)
@@ -278,7 +274,7 @@ func RunErr() error {
 	return RootCmd.Execute()
 }
 
-func CallTS(ts *script.Script, args[]string) error {
+func CallTS(ts *runtime.Script, args[]string) error {
 	RootCmd.SetArgs(args)
 
 	err := RootCmd.Execute()
@@ -286,3 +282,32 @@ func CallTS(ts *script.Script, args[]string) error {
 
 	return err
 }
+
+{{ if .CLI.CustomHelp }}
+const RootCustomHelp = `{{ .CLI.CustomHelp }}`
+{{ end }}
+
+{{ if .CLI.Topics }}
+var RootTopics = map[string]string {
+  {{- range $k, $v := .CLI.Topics }}
+  "{{ $k }}": `{{ $v }}`,
+  {{- end}}
+}
+{{ end }}
+
+{{ if .CLI.Examples }}
+var RootExamples = map[string]string {
+  {{- range $k, $v := .CLI.Examples }}
+  "{{ $k }}": `{{ $v }}`,
+  {{- end}}
+}
+{{ end }}
+
+{{ if .CLI.Tutorials }}
+var RootTutorials = map[string]string {
+  {{- range $k, $v := .CLI.Tutorials }}
+  "{{ $k }}": `{{ $v }}`,
+  {{- end}}
+}
+{{ end }}
+
