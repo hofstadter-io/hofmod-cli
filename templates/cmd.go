@@ -37,12 +37,21 @@ import (
   {{ end }}
 	{{ end }}
 
+	{{/* hack */}}
+	{{ if .CMD.Flags }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CMD.Pflags }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CMD.Topics }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CMD.Examples }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CMD.Tutorials }}
+	"{{ .CLI.Package }}/flags"
+	{{ end }}
 	{{ if .CLI.Telemetry }}
 	"{{ .CLI.Package }}/ga"
 	{{end}}
-	{{ if or .CMD.Flags .CMD.Pflags }}
-	"{{ .CLI.Package }}/flags"
-	{{ end }}
 )
 
 {{ if .CMD.Long }}
@@ -207,8 +216,32 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 }
 
 func init() {
+	extra := func(cmd *cobra.Command) bool {
+		{{ if .CMD.Topics }}
+		if flags.PrintSubject("Topics\n", "", flags.RootPflags.Topic, {{ .CMD.CmdName }}Topics) {
+			return true
+		}
+		{{ end }}
+
+		{{ if .CMD.Examples }}
+		if flags.PrintSubject("Examples\n", "", flags.RootPflags.Example, {{ .CMD.CmdName }}Examples) {
+			return true
+		}
+		{{ end }}
+
+		{{ if .CMD.Tutorials }}
+		if flags.PrintSubject("Tutorials\n", "", flags.RootPflags.Tutorial, {{ .CMD.CmdName }}Tutorials) {
+			return true
+		}
+		{{ end }}
+
+		return false
+	}
 	{{ if .CMD.CustomHelp }}
 	help := func (cmd *cobra.Command, args []string) {
+		if extra(cmd) {
+			return
+		}
 		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
 		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(ch)
@@ -217,6 +250,9 @@ func init() {
 		{{ end }}
 	}
 	usage := func (cmd *cobra.Command) error {
+		if extra(cmd) {
+			return nil
+		}
 		fu := {{ $.CMD.CmdName }}Cmd.Flags().FlagUsages()
 		ch := strings.Replace({{ $.CMD.CmdName }}CustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(ch)
@@ -226,8 +262,20 @@ func init() {
 		return fmt.Errorf("unknown command %q", cmd.Name())
 	}
 	{{ else }}
-	help := {{ $.CMD.CmdName }}Cmd.HelpFunc()
-	usage := {{ $.CMD.CmdName }}Cmd.UsageFunc()
+	ohelp := {{ $.CMD.CmdName }}Cmd.HelpFunc()
+	ousage := {{ $.CMD.CmdName }}Cmd.UsageFunc()
+	help := func (cmd *cobra.Command, args []string) {
+		if extra(cmd) {
+			return
+		}
+		ohelp(cmd, args)
+	}
+	usage := func(cmd *cobra.Command) error {
+		if extra(cmd) {
+			return nil
+		}
+		return ousage(cmd)
+	}
 	{{ end }}
 
 	{{ if .CLI.Telemetry }}

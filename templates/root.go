@@ -20,12 +20,21 @@ import (
 	{{ end }}
 	{{ end }}
 
+	{{/* hack */}}
+	{{ if .CLI.Flags }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CLI.Pflags }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CLI.Topics }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CLI.Examples }}
+	"{{ .CLI.Package }}/flags"
+	{{ else if .CLI.Tutorials }}
+	"{{ .CLI.Package }}/flags"
+	{{ end }}
 	{{ if .CLI.Telemetry }}
 	"{{ .CLI.Package }}/ga"
 	{{end}}
-	{{ if or .CLI.Flags .CLI.Pflags }}
-	"{{ .CLI.Package }}/flags"
-	{{ end }}
 )
 
 {{ if .CLI.Long }}
@@ -181,22 +190,60 @@ var RootCmd = &cobra.Command{
 }
 
 func RootInit() {
+	extra := func(cmd *cobra.Command) bool {
+		{{ if .CLI.Topics }}
+		if flags.PrintSubject("Topics", "  ", flags.RootPflags.Topic, RootTopics) {
+			return true
+		}
+		{{ end }}
+
+		{{ if .CLI.Examples }}
+		if flags.PrintSubject("Examples", "  ", flags.RootPflags.Example, RootExamples) {
+			return true
+		}
+		{{ end }}
+
+		{{ if .CLI.Tutorials }}
+		if flags.PrintSubject("Tutorials", "  ", flags.RootPflags.Tutorial, RootTutorials) {
+			return true
+		}
+		{{ end }}
+
+		return false
+	}
 	{{ if .CLI.CustomHelp }}
 	help := func (cmd *cobra.Command, args []string) {
+		if extra(cmd) {
+			return
+		}
 		fu := RootCmd.Flags().FlagUsages()
 		rh := strings.Replace(RootCustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(rh)
-		fmt.Println(cmd.Name(), "hof", args)
 	}
 	usage := func(cmd *cobra.Command) error {
+		if extra(cmd) {
+			return nil
+		}
 		fu := RootCmd.Flags().FlagUsages()
 		rh := strings.Replace(RootCustomHelp, "<<flag-usage>>", fu, 1)
 		fmt.Println(rh)
 		return fmt.Errorf("unknown {{ .CLI.cliName }} command")
 	}
 	{{ else }}
-	help := RootCmd.HelpFunc()
-	usage := RootCmd.UsageFunc()
+	ohelp := RootCmd.HelpFunc()
+	ousage := RootCmd.UsageFunc()
+	help := func (cmd *cobra.Command, args []string) {
+		if extra(cmd) {
+			return
+		}
+		ohelp(cmd, args)
+	}
+	usage := func(cmd *cobra.Command) error {
+		if extra(cmd) {
+			return nil
+		}
+		return ousage(cmd)
+	}
 	{{ end }}
 
 	{{ if .CLI.Telemetry }}
@@ -290,7 +337,7 @@ const RootCustomHelp = `{{ .CLI.CustomHelp }}`
 {{ if .CLI.Topics }}
 var RootTopics = map[string]string {
   {{- range $k, $v := .CLI.Topics }}
-  "{{ $k }}": `{{ $v }}`,
+  "{{ $k }}": `{{ replace $v "`" "¡" -1 }}`,
   {{- end}}
 }
 {{ end }}
@@ -298,7 +345,7 @@ var RootTopics = map[string]string {
 {{ if .CLI.Examples }}
 var RootExamples = map[string]string {
   {{- range $k, $v := .CLI.Examples }}
-  "{{ $k }}": `{{ $v }}`,
+  "{{ $k }}": `{{ replace $v "`" "¡" -1 }}`,
   {{- end}}
 }
 {{ end }}
@@ -306,7 +353,7 @@ var RootExamples = map[string]string {
 {{ if .CLI.Tutorials }}
 var RootTutorials = map[string]string {
   {{- range $k, $v := .CLI.Tutorials }}
-  "{{ $k }}": `{{ $v }}`,
+  "{{ $k }}": `{{ replace $v "`" "¡" -1 }}`,
   {{- end}}
 }
 {{ end }}
