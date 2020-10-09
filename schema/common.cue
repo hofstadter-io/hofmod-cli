@@ -44,7 +44,5 @@ import "text/template"
 	Topics:    [string]: string
 	Examples:  [string]: string
 	Tutorials: [string]: string
-
-  ...
 }
 

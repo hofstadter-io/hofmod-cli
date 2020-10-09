@@ -5,7 +5,7 @@ import (
 )
 
 #FlagType:
-  "string"  | "[]string"  |
+  *"string"  | "[]string"  |
   "int"     | "[]int"     |
   "float64" | "[]float64" |
   "bool"
@@ -20,7 +20,5 @@ import (
   Help:     string | *""
   Long:     string | *""
   Short:    string | *""
-
-  ...
 }
 

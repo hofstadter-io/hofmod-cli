@@ -11,7 +11,7 @@ import (
 
 #HofGenerator: hof.#HofGenerator & {
   Cli: schema.#Cli
-  Outdir?: string
+  Outdir?: string | *"./"
 
   OutdirConfig: {
     CiOutdir: string | *"\(Outdir)/ci/\(In.CLI.cliName)"
@@ -42,24 +42,39 @@ import (
   }
 
   // Combine everything together and output files that might need to be generated
-  _All: [
-    _OnceFiles,
-    _S1_Cmds,
-    _S2_Cmds,
-    _S3_Cmds,
-    _S4_Cmds,
-    _S5_Cmds,
-    _S1_Flags,
-    _S2_Flags,
-    _S3_Flags,
-    _S4_Flags,
-    _S5_Flags,
+  All: [
+   [ for _, F in OnceFiles { F } ],
+   [ for _, F in S1_Cmds { F } ],
+   [ for _, F in S2_Cmds { F } ],
+   [ for _, F in S3_Cmds { F } ],
+   [ for _, F in S4_Cmds { F } ],
+   [ for _, F in S5_Cmds { F } ],
+   [ for _, F in S1_Flags { F } ],
+   [ for _, F in S2_Flags { F } ],
+   [ for _, F in S3_Flags { F } ],
+   [ for _, F in S4_Flags { F } ],
+   [ for _, F in S5_Flags { F } ],
+
+   // OnceFiles,
+	 //S1_Cmds,
+	 //S2_Cmds,
+	 //S3_Cmds,
+	 //S4_Cmds,
+	 //S5_Cmds,
+	 //S1_Flags,
+	 //S2_Flags,
+	 //S3_Flags,
+	 //S4_Flags,
+	 //S5_Flags,
   ]
 
-  Out: [...hof.#HofGeneratorFile] & list.FlattenN(_All , 1)
+	// Out: OnceFiles
+	// Out: [...hof.#HofGeneratorFile] & OnceFiles
+  // Out: list.FlattenN(All , 1)
+  Out: [...hof.#HofGeneratorFile] & list.FlattenN(All , 1)
 
   // Files that are not repeatedly used, they are generated once for the whole CLI
-  _OnceFiles: [...hof.#HofGeneratorFile] & [
+  OnceFiles: [...hof.#HofGeneratorFile] & [
     {
       TemplateName: "main.go"
       Filepath: "\(OutdirConfig.CliOutdir)/main.go"
@@ -118,23 +133,23 @@ import (
         })
       }
     },
-    {
-      if In.CLI.Releases != _|_ {
-        Template:  templates.DockerfileJessie
-        Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.jessie"
-      }
-    },
-    {
-      if In.CLI.Releases != _|_ {
-        Template:  templates.DockerfileScratch
-        Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.scratch"
-      }
-    },
+		{
+			if In.CLI.Releases != _|_ {
+				Template:  templates.DockerfileJessie
+				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.jessie"
+			}
+		},
+		{
+			if In.CLI.Releases != _|_ {
+				Template:  templates.DockerfileScratch
+				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.scratch"
+			}
+		},
 
   ]
 
   // Sub command tree
-  _S1_Cmds: [...hof.#HofGeneratorFile] & list.FlattenN([[
+  S1_Cmds: [...hof.#HofGeneratorFile] & list.FlattenN([[
     for _, C in Cli.Commands
     {
       In: {
@@ -169,11 +184,11 @@ import (
 		}
 	]], 1)
 
-  _S2C: [ for P in _S1_Cmds if len(P.In.CMD.Commands) > 0 {
+  S2C: [ for P in S1_Cmds if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name } }]
   }]
-  _S2_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S2C, 1)
+  S2_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S2C, 1)
     {
       In: {
         CMD: C
@@ -183,11 +198,11 @@ import (
     }
   ]
 
-  _S3C: [ for P in _S2_Cmds if len(P.In.CMD.Commands) > 0 {
+  S3C: [ for P in S2_Cmds if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
-  _S3_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S3C, 1)
+  S3_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S3C, 1)
     {
       In: {
         CMD: C
@@ -197,11 +212,11 @@ import (
     }
   ]
 
-  _S4C: [ for P in _S3_Cmds if len(P.In.CMD.Commands) > 0 {
+  S4C: [ for P in S3_Cmds if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
-  _S4_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S4C, 1)
+  S4_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S4C, 1)
     {
       In: {
         CMD: C
@@ -211,11 +226,11 @@ import (
     }
   ]
 
-  _S5C: [ for P in _S4_Cmds if len(P.In.CMD.Commands) > 0 {
+  S5C: [ for P in S4_Cmds if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
-  _S5_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S5C, 1)
+  S5_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S5C, 1)
     {
       In: {
         CMD: C
@@ -227,7 +242,7 @@ import (
 
 
   // Persistent Flags
-  _S1_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+  S1_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
     for _, C in Cli.Commands if C.Pflags != _|_ || C.Flags != _|_
     {
       In: {
@@ -242,11 +257,11 @@ import (
     }
   ]
 
-  _S2F: [ for P in _S1_Flags if len(P.In.CMD.Commands) > 0 {
+  S2F: [ for P in S1_Flags if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name } }]
   }]
-  _S2_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S2F, 1)
+  S2_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S2F, 1)
     {
       In: {
         CMD: {
@@ -259,11 +274,11 @@ import (
     }
   ]
 
-  _S3F: [ for P in _S2_Flags if len(P.In.CMD.Commands) > 0 {
+  S3F: [ for P in S2_Flags if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
-  _S3_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S3F, 1)
+  S3_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S3F, 1)
     {
       In: {
         CMD: {
@@ -276,11 +291,11 @@ import (
     }
   ]
 
-  _S4F: [ for P in _S3_Flags if len(P.In.CMD.Commands) > 0 {
+  S4F: [ for P in S3_Flags if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
-  _S4_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S4F, 1)
+  S4_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S4F, 1)
     {
       In: {
         CMD: {
@@ -293,11 +308,11 @@ import (
     }
   ]
 
-  _S5F: [ for P in _S4_Flags if len(P.In.CMD.Commands) > 0 {
+  S5F: [ for P in S4_Flags if len(P.In.CMD.Commands) > 0 {
     [ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ { C,  Parent: { Name: P.In.CMD.Name, Parent: P.In.CMD.Parent } }]
   }]
-  _S5_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
-    for _, C in list.FlattenN(_S5F, 1)
+  S5_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+    for _, C in list.FlattenN(S5F, 1)
     {
       In: {
         CMD: {
@@ -309,5 +324,7 @@ import (
       Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
   ]
+
+	...
 }
 

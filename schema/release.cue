@@ -18,6 +18,4 @@ package schema
     Maintainer: string
     Repo: string
   }
-
-  ...
 }

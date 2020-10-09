@@ -5,8 +5,8 @@ import (
 )
 
 #ArgType:
+  *"string"  |
   "[]string"  |
-  "string"  |
   "int"
 
 #Arg: {
@@ -19,7 +19,5 @@ import (
   Required?:  bool
   Rest?:      bool
   Help:       string | *""
-
-  ...
 }
 

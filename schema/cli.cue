@@ -8,7 +8,7 @@ import (
   Name:     string
   cliName:  strings.ToCamel(Name)
   CliName:  strings.ToTitle(Name)
-  CLI_NAME: strings.ToUpper(Name)
+  CLI_NAME: string | *strings.ToUpper(Name)
 
   Package:  string
 
@@ -28,6 +28,4 @@ import (
   EnablePProf: bool | *false
 
   #Common
-
-  ...
 }

@@ -1,17 +1,17 @@
 package templates
 
 
-DockerfileMaintainer :: """
+DockerfileMaintainer: """
 MAINTAINER {{ .CLI.Releases.Docker.Maintainer }}
 """
 
-DockerfileWorkdir :: """
+DockerfileWorkdir: """
 VOLUME ["/work"]
 WORKDIR /work
 """
 
 
-DockerfileJessie :: """
+DockerfileJessie: """
 FROM debian:jessie
 \(DockerfileMaintainer)
 
@@ -23,7 +23,7 @@ ENTRYPOINT ["{{ .CLI.cliName }}"]
 """
 
 
-DockerfileScratch :: """
+DockerfileScratch: """
 FROM scratch
 \(DockerfileMaintainer)
 

@@ -63,7 +63,7 @@ changelog:
 
 
 release:
-  disable: {% .CLI.Releases.Disabled %}
+  disable: {% .CLI.Releases.Disable %}
   draft: {% .CLI.Releases.Draft %}
   github:
     owner: {% .CLI.Releases.GitHub.Owner %}
@@ -72,7 +72,7 @@ release:
 dockers:
 - binaries:
     - {% .CLI.cliName %}
-  skip_push: {% .CLI.Releases.Disabled %}
+  skip_push: {% .CLI.Releases.Disable %}
   dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.jessie
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}"
@@ -88,7 +88,7 @@ dockers:
 
 - binaries:
     - {% .CLI.cliName %}
-  skip_push: {% .CLI.Releases.Disabled %}
+  skip_push: {% .CLI.Releases.Disable %}
   dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.scratch
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}-scratch"

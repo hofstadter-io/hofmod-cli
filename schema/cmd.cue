@@ -9,12 +9,11 @@ import (
   cmdName:  strings.ToCamel(Name)
   CmdName:  strings.ToTitle(Name)
 
-  Hidden?:        bool
+  Hidden?:       bool
+	OmitTests?:    bool
   Aliases?:      [...string]
   PackageName?:  string
 
   #Common
-
-  ...
 }
 
