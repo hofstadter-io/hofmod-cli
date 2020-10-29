@@ -39,6 +39,13 @@ import (
       LHS3_D: "{%%"
       RHS3_D: "%%}"
     }
+    "**/box-gen.go": {
+      AltDelims: true
+      LHS2_D: "{%"
+      RHS2_D: "%}"
+      LHS3_D: "{%%"
+      RHS3_D: "%%}"
+    }
   }
 
   // Combine everything together and output files that might need to be generated
@@ -96,25 +103,25 @@ import (
       Filepath: "\(OutdirConfig.FlagsOutdir)/root.go"
     },
     {
-      if In.CLI.VersionCommand != _|_ {
+      if (In.CLI.VersionCommand & true) != _|_ {
         TemplateName: "version.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/version.go"
       }
     },
     {
-      if In.CLI.VersionCommand != _|_ {
+      if (In.CLI.VersionCommand & true) != _|_ {
         TemplateName: "verinfo.go"
         Filepath: "\(OutdirConfig.CliOutdir)/verinfo/verinfo.go"
       }
     },
     {
-      if In.CLI.Updates != _|_ {
+      if (In.CLI.Updates & true) != _|_ {
         TemplateName: "update.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/update.go"
       }
     },
     {
-      if In.CLI.CompletionCommands != _|_ {
+      if (In.CLI.CompletionCommands & true) != _|_ {
         TemplateName: "completions.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/completions.go"
       }
@@ -143,6 +150,18 @@ import (
 			if In.CLI.Releases != _|_ {
 				Template:  templates.DockerfileScratch
 				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.scratch"
+			}
+		},
+		{
+			if In.CLI.EmbedDir != _|_ {
+				TemplateName: "box.go"
+        Filepath: "\(Outdir)/box/box.go"
+			}
+		},
+		{
+			if In.CLI.EmbedDir != _|_ {
+				TemplateName: "box-gen.go"
+        Filepath: "\(Outdir)/box/generator.go"
 			}
 		},
 

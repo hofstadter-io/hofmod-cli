@@ -5,7 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
+	{{ if .CLI.Telemetry }}
 	"{{ .CLI.Package }}/ga"
+	{{ end }}
 )
 
 var (

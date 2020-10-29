@@ -12,6 +12,7 @@ import (
 
   Package:  string
 
+  Updates: bool | *true
   VersionCommand: bool | *true
   CompletionCommands: bool | *true
 
@@ -19,7 +20,8 @@ import (
 
   ConfigDir: string | *"\(cliName)"
 
-  Updates: bool | *true
+	// directory of files to embed into the binary
+	EmbedDir?: string
 
   Telemetry?: string
   TelemetryIdDir: string | *".\(cliName)"

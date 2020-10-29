@@ -6,5 +6,7 @@ github.com/hofstadter-io/hof v0.5.10 h1:JdniXLIctPS49zIKx4ggmwO13FQ1cMGOxtP0Xr2K
 github.com/hofstadter-io/hof v0.5.10/cue.mods h1:wkoyXbApGEtAcQCLciT1x8ffJSnqvQI/KFHO2h97N88=
 github.com/hofstadter-io/hofmod-cuefig v0.0.1 h1:B1mWOVnf35Dzqlha+vUjUd7GeQUSJQfLJTl0vOtXrrc=
 github.com/hofstadter-io/hofmod-cuefig v0.0.1/cue.mods h1:+3nl34nAVsm6hJTnDsZtfIrYGIkLqrr1yuGZvO9agBg=
+github.com/hofstadter-io/hofmod-cuefig v0.0.3 h1:gwKpDcJ2ss/Vk0dEiQl5BnKcc0Nt32fs3J0a1xaXtgk=
+github.com/hofstadter-io/hofmod-cuefig v0.0.3/cue.mods h1:PCjQBwVNEnHCoMNzr71QGnpc0BqhOI3KGCctueyk65Q=
 github.com/hofstadter-io/mvs v0.5.0 h1:PMCgjy0HABxx0EuCnB7ODmlC/rP7cwZu3jWyTnVF37E=
 github.com/hofstadter-io/mvs v0.5.0/cue.mods h1:3zTO9yBRvH0ML28h37/T/hWbOFG9d09eR1rTNKn60PU=

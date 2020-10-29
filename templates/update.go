@@ -14,7 +14,9 @@ import (
   "github.com/spf13/cobra"
 	"github.com/parnurzeal/gorequest"
 
+	{{ if .CLI.Telemetry }}
 	"{{ .CLI.Package }}/ga"
+	{{ end }}
 	"{{ .CLI.Package }}/verinfo"
 )
 
@@ -55,7 +57,9 @@ var UpdateCmd = &cobra.Command{
 	Long: UpdateLong,
 
 	PreRun: func(cmd *cobra.Command, args []string) {
+		{{ if .CLI.Telemetry }}
 		ga.SendCommandPath("update")
+		{{ end }}
 
 	},
 
