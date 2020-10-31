@@ -43,10 +43,10 @@ Add the following to the `cue.mods` file (same format as `go.mod`)
 ```
 module github.com/verdverm/my-cli
 
-cue v0.2.0
+cue master
 
 require (
-    github.com/hofstadter-io/hofmod-cli v0.5.8
+    github.com/hofstadter-io/hofmod-cli v0.7.0
 )
 ```
 
