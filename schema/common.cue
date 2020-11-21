@@ -10,7 +10,7 @@ import "text/template"
 #Common: {
   Name:     string
   Usage:    string | *Name
-  Short:    string 
+  Short:    string
   Long:     string | *Short
 	TBD:      string | *""
 
