@@ -50,17 +50,17 @@ import (
 
   // Combine everything together and output files that might need to be generated
   All: [
-   [ for _, F in OnceFiles { F } ],
-   [ for _, F in S1_Cmds { F } ],
-   [ for _, F in S2_Cmds { F } ],
-   [ for _, F in S3_Cmds { F } ],
-   [ for _, F in S4_Cmds { F } ],
-   [ for _, F in S5_Cmds { F } ],
-   [ for _, F in S1_Flags { F } ],
-   [ for _, F in S2_Flags { F } ],
-   [ for _, F in S3_Flags { F } ],
-   [ for _, F in S4_Flags { F } ],
-   [ for _, F in S5_Flags { F } ],
+   for _, F in OnceFiles { F },
+   for _, F in S1_Cmds { F },
+   for _, F in S2_Cmds { F },
+   for _, F in S3_Cmds { F },
+   for _, F in S4_Cmds { F },
+   for _, F in S5_Cmds { F },
+   for _, F in S1_Flags { F },
+   for _, F in S2_Flags { F },
+   for _, F in S3_Flags { F },
+   for _, F in S4_Flags { F },
+   for _, F in S5_Flags { F },
 
    // OnceFiles,
 	 //S1_Cmds,
@@ -78,7 +78,7 @@ import (
 	// Out: OnceFiles
 	// Out: [...hof.#HofGeneratorFile] & OnceFiles
   // Out: list.FlattenN(All , 1)
-  Out: [...hof.#HofGeneratorFile] & list.FlattenN(All , 1)
+  Out: [...hof.#HofGeneratorFile] & All
 
   // Files that are not repeatedly used, they are generated once for the whole CLI
   OnceFiles: [...hof.#HofGeneratorFile] & [
