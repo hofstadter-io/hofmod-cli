@@ -1,9 +1,5 @@
 project_name: "{% .CLI.cliName %}"
 
-before:
-  hooks:
-    - go mod vendor
-
 builds:
 - binary: "{% .CLI.cliName %}"
   main: main.go
