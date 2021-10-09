@@ -3,7 +3,7 @@ package gen
 import (
 	"list"
 
-  hof "github.com/hofstadter-io/hof/schema"
+  hof "github.com/hofstadter-io/hof/schema/gen"
 
   "github.com/hofstadter-io/hofmod-cli/schema"
   "github.com/hofstadter-io/hofmod-cli/templates"
