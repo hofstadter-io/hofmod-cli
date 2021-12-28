@@ -29,24 +29,17 @@ import (
 
   PackageName: "github.com/hofstadter-io/hofmod-cli"
 
-  PartialsDir:  "./partials/"
-  TemplatesDir: "./templates/"
-  TemplatesDirConfig: {
-    "**/goreleaser.yml": {
-      AltDelims: true
-      LHS2_D: "{%"
-      RHS2_D: "%}"
-      LHS3_D: "{%%"
-      RHS3_D: "%%}"
-    }
-    "**/box-gen.go": {
-      AltDelims: true
-      LHS2_D: "{%"
-      RHS2_D: "%}"
-      LHS3_D: "{%%"
-      RHS3_D: "%%}"
-    }
-  }
+	Templates: [{
+		Globs: ["templates/*.*", "templates/hls/**/*"]
+		TrimPrefix: "templates/"
+	},{
+		Globs: ["templates/alt/*"]
+		TrimPrefix: "templates/"
+		Delims: {
+			LHS: "{%"
+			RHS: "%}"
+		}
+	}]
 
   // Combine everything together and output files that might need to be generated
   All: [
@@ -61,18 +54,6 @@ import (
    for _, F in S3_Flags { F },
    for _, F in S4_Flags { F },
    for _, F in S5_Flags { F },
-
-   // OnceFiles,
-	 //S1_Cmds,
-	 //S2_Cmds,
-	 //S3_Cmds,
-	 //S4_Cmds,
-	 //S5_Cmds,
-	 //S1_Flags,
-	 //S2_Flags,
-	 //S3_Flags,
-	 //S4_Flags,
-	 //S5_Flags,
   ]
 
 	// Out: OnceFiles
@@ -83,84 +64,82 @@ import (
   // Files that are not repeatedly used, they are generated once for the whole CLI
   OnceFiles: [...hof.#HofGeneratorFile] & [
     {
-      TemplateName: "main.go"
+      TemplatePath: "main.go"
       Filepath: "\(OutdirConfig.CliOutdir)/main.go"
     },
     {
-      TemplateName: "root.go"
+      TemplatePath: "root.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/root.go"
     },
     {
-      TemplateName: "root_test.go"
+      TemplatePath: "root_test.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/root_test.go"
     },
     {
-      TemplateName: "hls/cli/root_help.hls"
+      TemplatePath: "hls/cli/root_help.hls"
       Filepath: "\(OutdirConfig.CmdOutdir)/hls/cli/root/help.hls"
     },
     {
-      TemplateName: "flags.go"
+      TemplatePath: "flags.go"
       Filepath: "\(OutdirConfig.FlagsOutdir)/root.go"
     },
     {
       if (In.CLI.VersionCommand & true) != _|_ {
-        TemplateName: "version.go"
+        TemplatePath: "version.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/version.go"
       }
     },
     {
       if (In.CLI.VersionCommand & true) != _|_ {
-        TemplateName: "verinfo.go"
+        TemplatePath: "verinfo.go"
         Filepath: "\(OutdirConfig.CliOutdir)/verinfo/verinfo.go"
       }
     },
     {
       if (In.CLI.Updates & true) != _|_ {
-        TemplateName: "update.go"
+        TemplatePath: "update.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/update.go"
       }
     },
     {
       if (In.CLI.CompletionCommands & true) != _|_ {
-        TemplateName: "completions.go"
+        TemplatePath: "completions.go"
         Filepath: "\(OutdirConfig.CmdOutdir)/completions.go"
       }
     },
     {
       if In.CLI.Telemetry != _|_ {
-        TemplateName: "ga.go"
+        TemplatePath: "ga.go"
         Filepath: "\(OutdirConfig.CliOutdir)/ga/ga.go"
       }
     },
     {
       if In.CLI.Releases != _|_ {
-        ( hof.#HofGeneratorFile & {
-          TemplateName:  "goreleaser.yml"
-          Filepath:  "\(OutdirConfig.CliOutdir)/.goreleaser.yml"
-        })
+				TemplatePath:  "alt/goreleaser.yml"
+				Filepath:  "\(OutdirConfig.CliOutdir)/.goreleaser.yml"
       }
     },
 		{
 			if In.CLI.Releases != _|_ {
-				Template:  templates.DockerfileJessie
+				TemplateContent:  templates.DockerfileJessie
 				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.jessie"
 			}
 		},
 		{
 			if In.CLI.Releases != _|_ {
-				Template:  templates.DockerfileScratch
+				TemplateContent:  templates.DockerfileScratch
 				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.scratch"
 			}
 		},
 		{
 			if In.CLI.EmbedDir != _|_ {
-				TemplateName: "box.go"
+				TemplatePath: "alt/box.go"
         Filepath: "\(Outdir)/box/box.go"
 			}
 		},
 		{
 			if In.CLI.EmbedDir != _|_ {
-				TemplateName: "box-gen.go"
+				TemplatePath: "alt/box-gen.go"
         Filepath: "\(Outdir)/box/generator.go"
 			}
 		},
@@ -177,7 +156,7 @@ import (
           PackageName: "cmd"
         }
       }
-      TemplateName: "cmd.go"
+      TemplatePath: "cmd.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/\(In.CMD.Name).go"
 		}
 	], [
@@ -189,7 +168,7 @@ import (
           PackageName: "cmd"
         }
       }
-      TemplateName: "cmd_test.go"
+      TemplatePath: "cmd_test.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/\(In.CMD.Name)_test.go"
 		}
 	], [
@@ -198,7 +177,7 @@ import (
       In: {
         CMD: C
       }
-      TemplateName: "hls/cli/cmd_help.hls"
+      TemplatePath: "hls/cli/cmd_help.hls"
       Filepath: "\(OutdirConfig.CmdOutdir)/hls/cli/\(In.CMD.cmdName)/help.hls"
 		}
 	]], 1)
@@ -212,7 +191,7 @@ import (
       In: {
         CMD: C
       }
-      TemplateName: "cmd.go"
+      TemplatePath: "cmd.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Name)/\(C.Name).go"
     }
   ]
@@ -226,7 +205,7 @@ import (
       In: {
         CMD: C
       }
-      TemplateName: "cmd.go"
+      TemplatePath: "cmd.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Parent.Name)/\(C.Parent.Name)/\(C.Name).go"
     }
   ]
@@ -240,7 +219,7 @@ import (
       In: {
         CMD: C
       }
-      TemplateName: "cmd.go"
+      TemplatePath: "cmd.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Parent.Parent.Name)/\(C.Parent.Parent.Name)/\(C.Parent.Name)/\(C.Name).go"
     }
   ]
@@ -254,7 +233,7 @@ import (
       In: {
         CMD: C
       }
-      TemplateName: "cmd.go"
+      TemplatePath: "cmd.go"
       Filepath: "\(OutdirConfig.CmdOutdir)/\(C.Parent.Parent.Parent.Parent.Name)/\(C.Parent.Parent.Parent.Name)/\(C.Parent.Parent.Name)/\(C.Parent.Name)/\(C.Name).go"
     }
   ]
@@ -271,7 +250,7 @@ import (
           PackageName: "flags"
         }
       }
-      TemplateName: "flags.go"
+      TemplatePath: "flags.go"
       Filepath: "\(OutdirConfig.FlagsOutdir)/\(In.CMD.Name).go"
     }
   ]
@@ -288,7 +267,7 @@ import (
           PackageName: "flags"
         }
       }
-      TemplateName: "flags.go"
+      TemplatePath: "flags.go"
       Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Name)__\(C.Name).go"
     }
   ]
@@ -305,7 +284,7 @@ import (
           PackageName: "flags"
         }
       }
-      TemplateName: "flags.go"
+      TemplatePath: "flags.go"
       Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
   ]
@@ -322,7 +301,7 @@ import (
           PackageName: "flags"
         }
       }
-      TemplateName: "flags.go"
+      TemplatePath: "flags.go"
       Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
   ]
@@ -339,7 +318,7 @@ import (
           PackageName: "flags"
         }
       }
-      TemplateName: "flags.go"
+      TemplatePath: "flags.go"
       Filepath: "\(OutdirConfig.FlagsOutdir)/\(C.Parent.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Parent.Name)__\(C.Parent.Parent.Name)__\(C.Parent.Name)__\(C.Name).go"
     }
   ]
