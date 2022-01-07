@@ -3,16 +3,17 @@
 
 {{ $Prefix := "Root" }}
 {{ if $.Parent.Parent.Parent.Parent }}
-  {{ $Prefix = (print $.CMD.Parent.Parent.Parent.Parent.Name "__" $.CMD.Parent.Parent.Parent.Name "__" $.CMD.Parent.Parent.Name "__" $.CMD.Parent.Name "__" $.CMD.CmdName) }}
+  {{ $Prefix = (print $.Parent.Parent.Parent.Parent.Name "__" $.Parent.Parent.Parent.Name "__" $.Parent.Parent.Name "__" $.Parent.Name "__" $.CmdName) }}
 {{ else if $.Parent.Parent.Parent }}
-  {{ $Prefix = (print $.CMD.Parent.Parent.Parent.Name "__" $.CMD.Parent.Parent.Name "__" $.CMD.Parent.Name "__" $.CMD.CmdName) }}
+  {{ $Prefix = (print $.Parent.Parent.Parent.Name "__" $.Parent.Parent.Name "__" $.Parent.Name "__" $.CmdName) }}
 {{ else if $.Parent.Parent }}
-  {{ $Prefix = (print $.CMD.Parent.Parent.Name "__" $.CMD.Parent.Name "__" $.CMD.CmdName) }}
+  {{ $Prefix = (print $.Parent.Parent.Name "__" $.Parent.Name "__" $.CmdName) }}
 {{ else if $.Parent }}
-  {{ $Prefix = (print $.CMD.Parent.Name "__" $.CMD.CmdName) }}
+  {{ $Prefix = (print $.Parent.Name "__" $.CmdName) }}
 {{ else if $.CmdName }}
   {{ $Prefix = $.CmdName }}
 {{ end }}
+{{ $Prefix = ( title $Prefix ) }}
 
 type {{ $Prefix }}Pflagpole struct {
   {{ range $i, $F := $.Pflags }}
