@@ -17,5 +17,9 @@ package schema
   Docker: {
     Maintainer: string
     Repo: string
+    Versions: {
+      debian: string | *"11.3"
+      alpine: string | *"3.15"
+    }
   }
 }

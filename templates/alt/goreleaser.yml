@@ -24,12 +24,6 @@ builds:
   goarch:
     - amd64
     - arm64
-    - arm
-
-  ignore:
-  - goos: linux
-    goarch: arm
-
 
 snapshot:
   name_template: "{{ .Tag }}-SNAPSHOT-{{.ShortCommit}}"
@@ -66,10 +60,8 @@ release:
     name: {%  .CLI.Releases.GitHub.Repo %}
 
 dockers:
-- binaries:
-    - {% .CLI.cliName %}
-  skip_push: {% .CLI.Releases.Disable %}
-  dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.jessie
+- skip_push: {% .CLI.Releases.Disable %}
+  dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.debian
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}"
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
@@ -81,10 +73,15 @@ dockers:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}-debian"
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:latest-debian"
 
+- skip_push: {% .CLI.Releases.Disable %}
+  dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.alpine
+  image_templates:
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}-alpine"
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}-alpine"
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:v{{ .Major }}-alpine"
+  - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:latest-alpine"
 
-- binaries:
-    - {% .CLI.cliName %}
-  skip_push: {% .CLI.Releases.Disable %}
+- skip_push: {% .CLI.Releases.Disable %}
   dockerfile: ../../ci/{% .CLI.cliName %}/docker/Dockerfile.scratch
   image_templates:
   - "{% .CLI.Releases.Docker.Repo %}/{{.ProjectName}}:{{.Tag}}-scratch"

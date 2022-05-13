@@ -121,8 +121,14 @@ import (
     },
 		{
 			if In.CLI.Releases != _|_ {
-				TemplateContent:  templates.DockerfileJessie
-				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.jessie"
+				TemplateContent:  templates.DockerfileDebian
+				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.debian"
+			}
+		},
+		{
+			if In.CLI.Releases != _|_ {
+				TemplateContent:  templates.DockerfileAlpine
+				Filepath:  "\(OutdirConfig.CiOutdir)/docker/Dockerfile.alpine"
 			}
 		},
 		{
