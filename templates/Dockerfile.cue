@@ -15,7 +15,7 @@ DockerfileJessie: """
 FROM debian:jessie
 \(DockerfileMaintainer)
 
-COPY {{ .CLI.cliName }} /usr/bin/local
+COPY {{ .CLI.cliName }} /usr/local/bin
 ENTRYPOINT ["{{ .CLI.cliName }}"]
 
 \(DockerfileWorkdir)
