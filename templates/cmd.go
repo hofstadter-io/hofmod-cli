@@ -14,6 +14,9 @@ import (
 	"fmt"
 	"os"
 	{{end}}
+  {{- if (and (len .CMD.Commands) (not .CMD.OmitRun)) }}
+	"path/filepath"
+	{{ end }}
 
   "github.com/spf13/cobra"
 
@@ -142,6 +145,15 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
   {{ if .CMD.Long }}
   Long: {{ .CMD.Name }}Long,
   {{ end }}
+
+  {{ if (and (len .CMD.Commands) (not .CMD.OmitRun)) }}
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		glob := toComplete + "*"
+		matches, _ := filepath.Glob(glob)
+		return matches, cobra.ShellCompDirectiveDefault
+	},
+
+	{{ end }}
 
   {{ if .CMD.PersistentPrerun }}
   PersistentPreRun: func(cmd *cobra.Command, args []string) {

@@ -9,7 +9,6 @@ builds:
     - -X {% .CLI.Package %}/verinfo.Version={{.Version}}
     - -X {% .CLI.Package %}/verinfo.Commit={{.FullCommit}}
     - -X {% .CLI.Package %}/verinfo.BuildDate={{.Date}}
-    - -X {% .CLI.Package %}/verinfo.GoVersion=go1.14
     - -X {% .CLI.Package %}/verinfo.BuildOS={{.Os}}
     - -X {% .CLI.Package %}/verinfo.BuildArch={{.Arch}}
     - -X {% .CLI.Package %}/verinfo.BuildArm={{.Arm}}
