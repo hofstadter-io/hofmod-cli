@@ -24,7 +24,15 @@ import (
 	EmbedDir?: string
 
   Telemetry?: string
-  TelemetryIdDir: string | *".\(cliName)"
+	TelemetryAsk: string | *"""
+	We only send the command run, no args or input.
+	You can disable at any time by setting
+	  \(CLI_NAME)_TELEMETRY_DISABLED=1
+
+	Would you like to help by sharing very basic usage stats?
+	"""
+	// subdir under os.UserConfigDir
+  TelemetryIdDir: string | *"\(cliName)"
 
   // Debugging
   EnablePProf: bool | *false

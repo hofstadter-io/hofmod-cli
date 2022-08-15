@@ -8,15 +8,105 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/hofstadter-io/yagu"
+	"github.com/hofstadter-io/cinful"
+	"github.com/hofstadter-io/hof/lib/yagu"
 
 	"{{ .CLI.Package }}/verinfo"
 )
 
+var dir, fn, cid string
+var isCI bool
+
+var debug = false
+
+func init() {
+	if debug {
+		fmt.Println("init telemetry")
+	}
+	// short-circuit
+	if os.Getenv("{{ .CLI.CLI_NAME }}_TELEMETRY_DISABLED") != "" {
+		if debug {
+			fmt.Println("telemetry disabled in env")
+		}
+		cid = "disabled"
+		return
+	}
+
+	// check if in CI
+	vendor := cinful.Info()
+	if vendor != nil {
+		if debug {
+			fmt.Println("in CI")
+		}
+		// generate an ID
+		id, _ := uuid.NewUUID()
+		cid = id.String()
+
+		isCI = true
+		cid = "CI-" + cid
+		return
+	}
+
+	// setup dir info
+	ucd, err := os.UserConfigDir()
+	if err != nil {
+		cid = "disabled"
+		return
+	}
+	dir = filepath.Join(ucd, "{{ .CLI.TelemetryIdDir }}")
+	fn = filepath.Join(dir, ".uuid")
+
+	// try reading
+	cid, err = readGaId()
+	if err != nil {
+		cid = "missing"
+	}
+	if cid == "disabled" {
+		if debug {
+			fmt.Println("telemetry disabled in cfg")
+		}
+		return
+	}
+
+	if debug {
+		fmt.Println("telemetry ok:", cid)
+	}
+
+	// does it exist already
+	if cid != "missing" {
+		return
+	}
+
+	// create the ID for the first time
+	// prompting user for approval
+
+	// if not found, ask and write
+	approve := askGaID()
+	if !approve {
+		err = writeGaId("disabled")
+	} else {
+		id, _ := uuid.NewUUID()
+		cid = id.String()
+		err = writeGaId(cid)
+	}
+
+	if err != nil {
+		fmt.Println("Error writing telemetry config, please let the devs know")
+		return
+	}
+}
+
 func SendCommandPath(cmd string) {
+	if debug {
+		fmt.Println("try sending:", cmd)
+	}
 	cs := strings.Fields(cmd)
 	c := strings.Join(cs[1:], "/")
-	SendGaEvent(c, "", 0)
+	l := "user"
+	if isCI {
+		l = "ci"
+	}
+	SendGaEvent(c, l, 0)
 }
 
 func SendGaEvent(action, label string, value int) {
@@ -24,9 +114,8 @@ func SendGaEvent(action, label string, value int) {
 		return
 	}
 
-	cid, err := readGaId()
-	if err != nil {
-		cid = "unknown"
+	if cid == "disabled" {
+		return
 	}
 
 	ua := fmt.Sprintf(
@@ -55,56 +144,58 @@ func SendGaEvent(action, label string, value int) {
 		evt.Value = value
 	}
 
+	if debug {
+		fmt.Printf("sending:\n%#v\n%#v\n", cfg, evt)
+	}
+
 	yagu.SendGaEvent(cfg, evt)
 }
 
 func readGaId() (string, error) {
 	// ucd := yagu.UserHomeDir()
-	ucd, err := os.UserConfigDir()
-	if err != nil {
-		return "", err
-	}
-	dir := filepath.Join(ucd, "{{ .CLI.TelemetryIdDir }}")
-	fn := filepath.Join(dir, ".uuid")
 
-	_, err = os.Lstat(fn)
+	_, err := os.Lstat(fn)
 	if err != nil {
-		// file does not exist, probably...
-		return writeGaId()
+		return "missing", err
 	}
 
 	content, err := ioutil.ReadFile(fn)
 	if err != nil {
-		return writeGaId()
+		return "missing", err
+	}
+
+	if debug {
+		fmt.Printf("read %q from %s\n", string(content), fn)
 	}
 
 	return string(content), nil
 }
 
-func writeGaId() (string, error) {
+func writeGaId(value string) error {
 
-	ucd, err := os.UserConfigDir()
+	err := os.MkdirAll(dir, 0755)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	dir := filepath.Join(ucd, "{{ .CLI.TelemetryIdDir }}")
-	err = yagu.Mkdir(dir)
+	err = ioutil.WriteFile(fn, []byte(value), 0644)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	fn := filepath.Join(dir, ".uuid")
+	return nil
+}
 
-	id, err := uuid.NewUUID()
-	if err != nil {
-		return id.String(), err
+var askMsg = `{{ .CLI.TelemetryAsk }}`
+
+func askGaId() bool {
+	prompt := "\n(y/n) >"
+	fmt.Printf(askMsg + prompt)
+	var ans string
+	fmt.Scanln(&ans)
+	a := strings.ToLower(ans)
+	if a == "n" || a == "no" {
+		return false
 	}
-
-	err = ioutil.WriteFile(fn, []byte(id.String()), 0644)
-	if err != nil {
-		return id.String(), err
-	}
-
-	return id.String(), nil
+	return true
 }
