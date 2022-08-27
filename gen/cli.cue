@@ -9,7 +9,8 @@ import (
 	"github.com/hofstadter-io/hofmod-cli/templates"
 )
 
-#HofGenerator: hof.#HofGenerator & {
+#HofGenerator: #Generator
+#Generator: hof.#Generator & {
 	Cli:     schema.#Cli
 	Outdir?: string | *"./"
 
