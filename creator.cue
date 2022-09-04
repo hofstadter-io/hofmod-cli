@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/hofstadter-io/hof/schema/common"
+	// "github.com/hofstadter-io/hof/schema/common"
 	"github.com/hofstadter-io/hof/schema/gen"
 )
 
@@ -31,19 +31,19 @@ Creator: gen.#Generator & {
 		Type:       "input"
 		Prompt:     "What is your CLI named"
 		Required:   true
-		Validation: common.NameLabel
+		// Validation: common.NameLabel
 	},{
 		Name:       "repo"
 		Type:       "input"
 		Prompt:     "Git repository"
 		Default:    "github.com/user/repo"
-		Validation: common.NameLabel
+		// Validation: common.NameLabel
 	},{
 		Name:       "about"
 		Type:       "input"
 		Prompt:     "Tell us a bit about it..."
 		Required:   true
-		Validation: common.NameLabel
+		// Validation: common.NameLabel
 	},{
 		Name:       "updates"
 		Type:       "confirm"

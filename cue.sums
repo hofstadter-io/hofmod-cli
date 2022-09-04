@@ -10,6 +10,8 @@ github.com/hofstadter-io/hof v0.5.17 h1:vrjt7MIsNtHJLmKlxYN5jTBw4RafW3jtbNuEbMFD
 github.com/hofstadter-io/hof v0.5.17/cue.mods h1:e8gef8ZTLbzmb+q7LMflOrqvk9d+C9o49i7uI9gdIvE=
 github.com/hofstadter-io/hof v0.6.0 h1:Jd+jp4+qkUAlFFIpr6fKwBqvSn5wC6xVQF2JfNC1tXk=
 github.com/hofstadter-io/hof v0.6.0/cue.mods h1:/StQ1pxKmfSQxRNCl954Bdw0AQS/5TUdRuqNUUhJkrw=
+github.com/hofstadter-io/hof v0.6.6 h1:WxwnjKrxmP9NvpM3bWIYiRAHrdf5KiPYRFlY6dvjV8I=
+github.com/hofstadter-io/hof v0.6.6/cue.mods h1:4VCt4OIY3Gri2GSX/u3bMQhRs6BFHmbJTn3Nq8ccqlE=
 github.com/hofstadter-io/hofmod-cuefig v0.0.1 h1:B1mWOVnf35Dzqlha+vUjUd7GeQUSJQfLJTl0vOtXrrc=
 github.com/hofstadter-io/hofmod-cuefig v0.0.1/cue.mods h1:+3nl34nAVsm6hJTnDsZtfIrYGIkLqrr1yuGZvO9agBg=
 github.com/hofstadter-io/hofmod-cuefig v0.0.3 h1:gwKpDcJ2ss/Vk0dEiQl5BnKcc0Nt32fs3J0a1xaXtgk=
