@@ -11,7 +11,6 @@ import (
 	"strings"
 	{{ end }}
 
-	"github.com/hofstadter-io/hof/script/runtime"
 	"github.com/spf13/cobra"
 
 	{{ if .CLI.Imports }}
@@ -122,7 +121,7 @@ var RootCmd = &cobra.Command{
 	var err error
     {{ template "args-parse" .CLI.Args }}
 
-	err = RootPersistentPreRun({{ template "lib-call.go" .CLI.Args }})
+	err = RootPersistentPreRun({{ template "lib-call.go" . }})
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -140,7 +139,7 @@ var RootCmd = &cobra.Command{
 	var err error
     {{ template "args-parse" .CLI.Args }}
 
-	err = RootPreRun({{ template "lib-call.go" .CLI.Args }})
+	err = RootPreRun({{ template "lib-call.go" . }})
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -154,7 +153,7 @@ var RootCmd = &cobra.Command{
 	var err error
     {{ template "args-parse" .CLI.Args }}
 
-	err = RootRun({{ template "lib-call.go" .CLI.Args }})
+	err = RootRun({{ template "lib-call.go" . }})
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -167,7 +166,7 @@ var RootCmd = &cobra.Command{
 	var err error
     {{ template "args-parse" .CLI.Args }}
 
-	err = RootPersistentPostRun({{ template "lib-call.go" .CLI.Args }})
+	err = RootPersistentPostRun({{ template "lib-call.go" . }})
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -180,7 +179,7 @@ var RootCmd = &cobra.Command{
 	var err error
     {{ template "args-parse" .CLI.Args }}
 
-	err = RootPostRun({{ template "lib-call.go" .CLI.Args }})
+	err = RootPostRun({{ template "lib-call.go" . }})
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -319,15 +318,6 @@ func RunErr() error {
 
 	RootInit()
 	return RootCmd.Execute()
-}
-
-func CallTS(ts *runtime.Script, args[]string) error {
-	RootCmd.SetArgs(args)
-
-	err := RootCmd.Execute()
-	ts.Check(err)
-
-	return err
 }
 
 {{ if .CLI.CustomHelp }}

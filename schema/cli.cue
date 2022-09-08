@@ -10,7 +10,8 @@ import (
   CliName:  strings.ToTitle(Name)
   CLI_NAME: strings.ToUpper(Name)
 
-  Package:  string
+	Module:   string
+  Package:  string | *"\(Module)/cmd/\(Name)"
 
   Updates: bool | *true
   VersionCommand: bool | *true

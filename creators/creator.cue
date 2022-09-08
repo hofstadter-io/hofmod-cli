@@ -65,19 +65,14 @@ Creator: gen.#Generator & {
 		...
 	}
 
-	Out: [...gen.#File] & [ {
-		TemplatePath: "debug"
-		Filepath:     "debug.yaml"
-	}, {
-		TemplatePath: "gen.cue"
-		Filepath:     "gen.cue"
-	}, {
-		TemplatePath: "cli.cue"
-		Filepath:     "cli.cue"
-	}, {
-		TemplatePath: "cue.mods"
-		Filepath:     "cue.mods"
-	}]
+	Out: [...gen.#File] & [ 
+		{ TemplatePath: "debug",  Filepath: "debug.yaml" },
+		for file in [
+			"cue.mods",
+			"cue.mod/module.cue",
+			"cli.cue",
+		]{ TemplatePath: file, Filepath: file }
+	]
 
 	gen.#SubdirTemplates & { #subdir: "creators" }
 

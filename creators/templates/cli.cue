@@ -1,12 +1,22 @@
 package {{ .name }}
 
 import (
+	"github.com/hofstadter-io/hofmod-cli/gen"
 	"github.com/hofstadter-io/hofmod-cli/schema"
 )
 
-Cli: schema.#Cli & {
+"{{ .name }}": gen.#Generator & {
+	@gen({{.name}},cli)
+	Name: "{{ .name }}"
+	Outdir: "./"
+	Cli: cli
+	WatchGlobs: ["./*.cue"]
+}
+
+cli: schema.#Cli & {
 
 	Name:    "{{ .name }}"
+	Module:  "{{ .repo }}"
 	Package: "{{ .repo }}/cmd/{{ .name }}"
 
 	Usage:      "{{ .name }}"

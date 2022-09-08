@@ -64,67 +64,59 @@ import (
 
 	// Files that are not repeatedly used, they are generated once for the whole CLI
 	OnceFiles: [...hof.#HofGeneratorFile] & [
-			{
+		{
+			TemplatePath: "go.mod"
+			Filepath:     "go.mod"
+		}, {
 			TemplatePath: "main.go"
 			Filepath:     "\(OutdirConfig.CliOutdir)/main.go"
-		},
-		{
+		}, {
 			TemplatePath: "root.go"
 			Filepath:     "\(OutdirConfig.CmdOutdir)/root.go"
-		},
-		{
+		}, {
 			TemplatePath: "flags.go"
 			Filepath:     "\(OutdirConfig.FlagsOutdir)/root.go"
-		},
-		{
+		}, {
 			if (In.CLI.VersionCommand & true) != _|_ {
 				TemplatePath: "version.go"
 				Filepath:     "\(OutdirConfig.CmdOutdir)/version.go"
 			}
-		},
-		{
+		}, {
 			if (In.CLI.VersionCommand & true) != _|_ {
 				TemplatePath: "verinfo.go"
 				Filepath:     "\(OutdirConfig.CliOutdir)/verinfo/verinfo.go"
 			}
-		},
-		{
+		}, {
 			if (In.CLI.Updates & true) != _|_ {
 				TemplatePath: "update.go"
 				Filepath:     "\(OutdirConfig.CmdOutdir)/update.go"
 			}
-		},
-		{
+		}, {
 			if (In.CLI.CompletionCommands & true) != _|_ {
 				TemplatePath: "completions.go"
 				Filepath:     "\(OutdirConfig.CmdOutdir)/completions.go"
 			}
-		},
-		{
+		}, {
 			if In.CLI.Telemetry != _|_ {
 				TemplatePath: "ga.go"
 				Filepath:     "\(OutdirConfig.CliOutdir)/ga/ga.go"
 			}
-		},
-		{
+		}, {
 			if In.CLI.Releases != _|_ {
 				TemplateContent: templates.DockerfileDebian
 				Filepath:        "\(OutdirConfig.CiOutdir)/docker/Dockerfile.debian"
 			}
-		},
-		{
+		}, {
 			if In.CLI.Releases != _|_ {
 				TemplateContent: templates.DockerfileAlpine
 				Filepath:        "\(OutdirConfig.CiOutdir)/docker/Dockerfile.alpine"
 			}
-		},
-		{
+		}, {
 			if In.CLI.Releases != _|_ {
 				TemplateContent: templates.DockerfileScratch
 				Filepath:        "\(OutdirConfig.CiOutdir)/docker/Dockerfile.scratch"
 			}
-		},
-		{
+		}, {
 			if In.CLI.Releases != _|_ {
 				TemplatePath: "alt/goreleaser.yml"
 				Filepath:     "\(OutdirConfig.CliOutdir)/.goreleaser.yml"
