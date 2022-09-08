@@ -66,7 +66,7 @@ Creator: gen.#Generator & {
 	}
 
 	Out: [...gen.#File] & [ 
-		{ TemplatePath: "debug",  Filepath: "debug.yaml" },
+		// { TemplatePath: "debug",  Filepath: "debug.yaml" },
 		for file in [
 			"cue.mods",
 			"cue.mod/module.cue",
