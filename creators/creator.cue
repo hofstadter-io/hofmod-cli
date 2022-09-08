@@ -17,11 +17,7 @@ Creator: gen.#Generator & {
 		Your new Cli generator is ready, run the following
 		to generate the code, build the binary, and run \(name).
 
-		0. fill in any empty fields
-		1. hof mod vendor cue
-		2. hof gen
-		3. go build -o \(name) ./cmd/\(name)
-		4. ./\(name) or ./\(name) -h
+		now run 'make first'    (cd to the --outdir if used)
 		"""
 	}
 
@@ -71,6 +67,7 @@ Creator: gen.#Generator & {
 			"cue.mods",
 			"cue.mod/module.cue",
 			"cli.cue",
+			"Makefile",
 		]{ TemplatePath: file, Filepath: file }
 	]
 

@@ -31,7 +31,7 @@ import (
 	PackageName: "github.com/hofstadter-io/hofmod-cli"
 
 	Templates: [{
-		Globs: ["templates/*.*"]
+		Globs: ["templates/*"]
 		TrimPrefix: "templates/"
 	}, {
 		Globs: ["templates/alt/*"]
@@ -67,6 +67,9 @@ import (
 		{
 			TemplatePath: "go.mod"
 			Filepath:     "go.mod"
+		}, {
+			TemplatePath: "Makefile"
+			Filepath:     "Makefile"
 		}, {
 			TemplatePath: "main.go"
 			Filepath:     "\(OutdirConfig.CliOutdir)/main.go"
