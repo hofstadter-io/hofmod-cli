@@ -10,60 +10,62 @@ Creator: gen.#Generator & {
 
 	Outdir: "./"
 
-	CreateMessage: {
-	  let name = CreateInput.name
-		Before: "Creating a new Go Cli"
-		After: """
-		Your new Cli generator is ready, run the following
-		to generate the code, build the binary, and run \(name).
+	Create: {
+		Message: {
+			let name = Input.name
+			Before: "Creating a new Go Cli"
+			After: """
+			Your new Cli generator is ready, run the following
+			to generate the code, build the binary, and run \(name).
 
-		now run 'make first'    (cd to the --outdir if used)
-		"""
+			now run 'make first'    (cd to the --outdir if used)
+			"""
+		}
+
+		Input: _
+		Prompt: [{
+			Name:       "name"
+			Type:       "input"
+			Prompt:     "What is your CLI named"
+			Required:   true
+			Validation: common.NameLabel
+		},{
+			Name:       "repo"
+			Type:       "input"
+			Prompt:     "Git repository"
+			Default:    "github.com/user/repo"
+			Validation: common.NameLabel
+		},{
+			Name:       "about"
+			Type:       "input"
+			Prompt:     "Tell us a bit about it..."
+			Required:   true
+			Validation: common.NameLabel
+		},{
+			Name:       "updates"
+			Type:       "confirm"
+			Prompt:     "Enable self updating"
+			Default:    true
+		},{
+			Name:       "telemetry"
+			Type:       "confirm"
+			Prompt:     "Enable telemetry"
+		},{
+			Name:       "releases"
+			Type:       "confirm"
+			Prompt:     "Enable GoReleaser tooling"
+			Default:    true
+		}]
 	}
 
-	CreateInput: _
-	CreatePrompt: [{
-		Name:       "name"
-		Type:       "input"
-		Prompt:     "What is your CLI named"
-		Required:   true
-		Validation: common.NameLabel
-	},{
-		Name:       "repo"
-		Type:       "input"
-		Prompt:     "Git repository"
-		Default:    "github.com/user/repo"
-		Validation: common.NameLabel
-	},{
-		Name:       "about"
-		Type:       "input"
-		Prompt:     "Tell us a bit about it..."
-		Required:   true
-		Validation: common.NameLabel
-	},{
-		Name:       "updates"
-		Type:       "confirm"
-		Prompt:     "Enable self updating"
-		Default:    true
-	},{
-		Name:       "telemetry"
-		Type:       "confirm"
-		Prompt:     "Enable telemetry"
-	},{
-		Name:       "releases"
-		Type:       "confirm"
-		Prompt:     "Enable GoReleaser tooling"
-		Default:    true
-	}]
-
 	In: {
-		CreateInput
+		Create.Input
 		...
 	}
 
 	Out: [...gen.#File] & [ 
-		// { TemplatePath: "debug",  Filepath: "debug.yaml" },
 		for file in [
+			"debug.yaml",
 			"cue.mods",
 			"cue.mod/module.cue",
 			"cli.cue",
@@ -74,7 +76,7 @@ Creator: gen.#Generator & {
 	gen.#SubdirTemplates & { #subdir: "creators" }
 
 	EmbeddedTemplates: {
-		debug: {
+		"debug.yaml": {
 			Content: """
 			{{ yaml . }}
 			"""
