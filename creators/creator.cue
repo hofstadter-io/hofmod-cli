@@ -8,8 +8,6 @@ import (
 Creator: gen.#Generator & {
 	@gen(creator)
 
-	Outdir: "./"
-
 	Create: {
 		Message: {
 			let name = Input.name
