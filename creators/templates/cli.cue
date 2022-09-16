@@ -25,7 +25,8 @@ cli: schema.#Cli & {
 
 	// set to true to print help from root command
 	// and always assume subcommands are to be run
-	OmitRun: false
+	// set to false to run code from the root command
+	OmitRun: true
 
 	Args: [
 		// add any args here

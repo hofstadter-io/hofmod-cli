@@ -28,6 +28,7 @@ Creator: gen.#Generator & {
 			updates:   bool | *false
 			telemetry: bool | *false
 		}
+
 		Prompt: [{
 			Name:       "name"
 			Type:       "input"
