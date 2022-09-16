@@ -20,7 +20,14 @@ Creator: gen.#Generator & {
 			"""
 		}
 
-		Input: _
+		Input: {
+			name:      string
+			repo:      string
+			about:     string
+			releases:  bool | *false
+			updates:   bool | *false
+			telemetry: bool | *false
+		}
 		Prompt: [{
 			Name:       "name"
 			Type:       "input"
@@ -40,20 +47,25 @@ Creator: gen.#Generator & {
 			Required:   true
 			Validation: common.NameLabel
 		},{
-			Name:       "updates"
-			Type:       "confirm"
-			Prompt:     "Enable self updating"
-			Default:    true
-		},{
-			Name:       "telemetry"
-			Type:       "confirm"
-			Prompt:     "Enable telemetry"
-		},{
 			Name:       "releases"
 			Type:       "confirm"
 			Prompt:     "Enable GoReleaser tooling"
 			Default:    true
-		}]
+		},
+
+		if Input.releases == true {
+			Name:       "updates"
+			Type:       "confirm"
+			Prompt:     "Enable self updating"
+			Default:    true
+		}
+
+		if Input.releases == true {
+			Name:       "telemetry"
+			Type:       "confirm"
+			Prompt:     "Enable telemetry"
+		}
+		]
 	}
 
 	In: {

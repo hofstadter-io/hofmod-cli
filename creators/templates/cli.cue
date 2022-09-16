@@ -38,7 +38,11 @@ cli: schema.#Cli & {
 	// extras
 	VersionCommand: true
 	CompletionCommands: true
-	{{ if .updates }}Updates: true{{ end }}
+	{{ if .updates }}
+	Updates: true
+	{{ else }}
+	Updates: false
+	{{ end }}
 
 	{{ if .telemetry }}
 	// set your GA identifier here
