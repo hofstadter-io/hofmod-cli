@@ -76,7 +76,7 @@ Creator: gen.#Generator & {
 
 	Out: [...gen.#File] & [ 
 		for file in [
-			"debug.yaml",
+			// "debug.yaml",
 			"cue.mods",
 			"cue.mod/module.cue",
 			"cli.cue",
