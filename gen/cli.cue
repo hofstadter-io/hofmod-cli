@@ -62,10 +62,10 @@ import (
 	// Out: OnceFiles
 	// Out: [...hof.#HofGeneratorFile] & OnceFiles
 	// Out: list.FlattenN(All , 1)
-	Out: [...hof.#HofGeneratorFile] & All
+	Out: [...hof.#File] & All
 
 	// Files that are not repeatedly used, they are generated once for the whole CLI
-	OnceFiles: [...hof.#HofGeneratorFile] & [
+	OnceFiles: [...hof.#File] & [
 		{
 			TemplatePath: "go.mod"
 			Filepath:     "go.mod"
@@ -131,7 +131,7 @@ import (
 	]
 
 	// Sub command tree
-	S1_Cmds: [...hof.#HofGeneratorFile] & [
+	S1_Cmds: [...hof.#File] & [
 			for _, C in Cli.Commands {
 			In: {
 				CMD: {
@@ -147,7 +147,7 @@ import (
 	S2C: list.FlattenN([ for P in S1_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name}}]
 	}], 1)
-	S2_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S2_Cmds: [...hof.#File] & [ // List comprehension
 			for _, C in S2C {
 			In: {
 				CMD: C
@@ -160,7 +160,7 @@ import (
 	S3C: list.FlattenN([ for P in S2_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S3_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S3_Cmds: [...hof.#File] & [ // List comprehension
 			for _, C in S3C {
 			In: {
 				CMD: C
@@ -173,7 +173,7 @@ import (
 	S4C: list.FlattenN([ for P in S3_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S4_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S4_Cmds: [...hof.#File] & [ // List comprehension
 			for _, C in S4C {
 			In: {
 				CMD: C
@@ -186,7 +186,7 @@ import (
 	S5C: list.FlattenN([ for P in S4_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S5_Cmds: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S5_Cmds: [...hof.#File] & [ // List comprehension
 			for _, C in S5C {
 			In: {
 				CMD: C
@@ -197,7 +197,7 @@ import (
 	]
 
 	// Persistent Flags
-	S1_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S1_Flags: [...hof.#File] & [ // List comprehension
 			for _, C in Cli.Commands if C.Pflags != _|_ || C.Flags != _|_ {
 			In: {
 				// CLI
@@ -211,10 +211,10 @@ import (
 		},
 	]
 
-	S2F: list.FlattenN([ for P in S1_Flags if len(P.In.CMD.Commands) > 0 {
+	S2F: list.FlattenN([ for P in S1_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name}}]
 	}], 1)
-	S2_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S2_Flags: [...hof.#File] & [ // List comprehension
 			for _, C in S2F {
 			In: {
 				CMD: {
@@ -227,10 +227,10 @@ import (
 		},
 	]
 
-	S3F: list.FlattenN([ for P in S2_Flags if len(P.In.CMD.Commands) > 0 {
+	S3F: list.FlattenN([ for P in S2_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S3_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S3_Flags: [...hof.#File] & [ // List comprehension
 			for _, C in S3F {
 			In: {
 				CMD: {
@@ -243,10 +243,10 @@ import (
 		},
 	]
 
-	S4F: list.FlattenN([ for P in S3_Flags if len(P.In.CMD.Commands) > 0 {
+	S4F: list.FlattenN([ for P in S3_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S4_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S4_Flags: [...hof.#File] & [ // List comprehension
 			for _, C in S4F {
 			In: {
 				CMD: {
@@ -259,10 +259,10 @@ import (
 		},
 	]
 
-	S5F: list.FlattenN([ for P in S4_Flags if len(P.In.CMD.Commands) > 0 {
+	S5F: list.FlattenN([ for P in S4_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S5_Flags: [...hof.#HofGeneratorFile] & [ // List comprehension
+	S5_Flags: [...hof.#File] & [ // List comprehension
 			for _, C in S5F {
 			In: {
 				CMD: {
