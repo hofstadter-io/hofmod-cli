@@ -4,7 +4,7 @@
 .PHONY: first
 first:
 	rm Makefile
-	hof mod vendor cue
+	hof mod tidy
 	hof gen
 	go mod tidy
 	go build -o {{ .name }} ./cmd/{{ .name }}

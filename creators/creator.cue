@@ -20,11 +20,6 @@ Creator: gen.#Generator & {
 			"""
 		}
 
-		Args: [...string]
-		if len(Args) > 0 {
-			Input: name: Args[0]
-		}
-
 		Input: {
 			name:      string
 			repo:      string
@@ -82,7 +77,6 @@ Creator: gen.#Generator & {
 	Out: [...gen.#File] & [ 
 		for file in [
 			// "debug.yaml",
-			"cue.mods",
 			"cue.mod/module.cue",
 			"cli.cue",
 			"Makefile",
