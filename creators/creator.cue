@@ -20,6 +20,11 @@ Creator: gen.#Generator & {
 			"""
 		}
 
+		Args: [...string]
+		if len(Args) > 0 {
+			Input: name: Args[0]
+		}
+
 		Input: {
 			name:      string
 			repo:      string
