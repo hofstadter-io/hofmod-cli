@@ -88,6 +88,9 @@ Creator: gen.#Generator & {
 		]{ TemplatePath: file, Filepath: file }
 	]
 
+	// Statics: []
+	// Partials: []
+
 	gen.#SubdirTemplates & { #subdir: "creators" }
 
 	EmbeddedTemplates: {

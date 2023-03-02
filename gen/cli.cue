@@ -42,8 +42,6 @@ import (
 		}
 	}]
 
-	Statics: []
-
 	// Combine everything together and output files that might need to be generated
 	All: [
 		for _, F in OnceFiles {F},

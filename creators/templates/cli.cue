@@ -11,9 +11,6 @@ import (
 	Outdir: "./"
 	Cli: cli
 	WatchGlobs: ["./*.cue"]
-
-	Statics: []
-	Partials: []
 }
 
 cli: schema.#Cli & {
