@@ -88,10 +88,12 @@ Creator: gen.#Generator & {
 		]{ TemplatePath: file, Filepath: file }
 	]
 
-	// Statics: []
-	// Partials: []
-
-	gen.#SubdirTemplates & { #subdir: "creators" }
+	Templates: [{
+		Globs: ["creators/templates/**/*"]
+		TrimPrefix: "creators/templates/"
+	}]
+	Statics: []
+	Partials: []
 
 	EmbeddedTemplates: {
 		"debug.yaml": {
