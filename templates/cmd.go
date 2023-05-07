@@ -86,7 +86,6 @@ func {{ .CMD.CmdName }}PreRun({{- template "lib-args.go" . -}}) (err error) {
 
 {{ if not .CMD.OmitRun}}
 func {{ .CMD.CmdName }}Run({{ template "lib-args.go" . -}}) (err error) {
-
 	{{ if .CMD.Body}}
 	{{ .CMD.Body}}
 	{{ else }}
@@ -168,11 +167,8 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
   },
   {{ end }}
 
-{{ if or .CMD.Prerun .CLI.Telemetry}}
+{{ if .CMD.Prerun }}
   PreRun: func(cmd *cobra.Command, args []string) {
-		{{ if .CLI.Telemetry }}
-		ga.SendCommandPath(cmd.CommandPath())
-		{{ end }}
 
 		{{ if .CMD.Prerun}}
 		var err error
@@ -189,6 +185,10 @@ var {{ .CMD.CmdName }}Cmd = &cobra.Command{
 
   {{ if not .CMD.OmitRun}}
   Run: func(cmd *cobra.Command, args []string) {
+		{{ if .CLI.Telemetry }}
+		ga.SendCommandPath(cmd.CommandPath())
+		{{ end }}
+
 		var err error
     {{ template "args-parse" .CMD.Args }}
 
@@ -251,6 +251,9 @@ func init() {
 	}
 	{{ if .CMD.CustomHelp }}
 	help := func (cmd *cobra.Command, args []string) {
+	{{ if .CLI.Telemetry }}
+		ga.SendCommandPath(cmd.CommandPath() + " help")
+	{{ end }}
 		if extra(cmd) {
 			return
 		}
@@ -262,6 +265,9 @@ func init() {
 		{{ end }}
 	}
 	usage := func (cmd *cobra.Command) error {
+	{{ if .CLI.Telemetry }}
+		ga.SendCommandPath(cmd.CommandPath() + " usage")
+	{{ end }}
 		if extra(cmd) {
 			return nil
 		}
@@ -276,13 +282,20 @@ func init() {
 	{{ else }}
 	ohelp := {{ $.CMD.CmdName }}Cmd.HelpFunc()
 	ousage := {{ $.CMD.CmdName }}Cmd.UsageFunc()
+
 	help := func (cmd *cobra.Command, args []string) {
+	{{ if .CLI.Telemetry }}
+		ga.SendCommandPath(cmd.CommandPath() + " help")
+	{{ end }}
 		if extra(cmd) {
 			return
 		}
 		ohelp(cmd, args)
 	}
 	usage := func(cmd *cobra.Command) error {
+	{{ if .CLI.Telemetry }}
+		ga.SendCommandPath(cmd.CommandPath() + " usage")
+	{{ end }}
 		if extra(cmd) {
 			return nil
 		}
@@ -290,21 +303,14 @@ func init() {
 	}
 	{{ end }}
 
-	{{ if .CLI.Telemetry }}
 	thelp := func (cmd *cobra.Command, args []string) {
-		ga.SendCommandPath(cmd.CommandPath() + " help")
 		help(cmd, args)
 	}
 	tusage := func (cmd *cobra.Command) error {
-		ga.SendCommandPath(cmd.CommandPath() + " usage")
 		return usage(cmd)
 	}
 	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(thelp)
 	{{ $.CMD.CmdName }}Cmd.SetUsageFunc(tusage)
-	{{ else }}
-	{{ $.CMD.CmdName }}Cmd.SetHelpFunc(help)
-	{{ $.CMD.CmdName }}Cmd.SetUsageFunc(usage)
-	{{ end }}
 
 {{if .CMD.Commands}}
   {{- range $i, $C := .CMD.Commands }}
