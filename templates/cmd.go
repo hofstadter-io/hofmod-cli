@@ -265,9 +265,6 @@ func init() {
 		{{ end }}
 	}
 	usage := func (cmd *cobra.Command) error {
-	{{ if .CLI.Telemetry }}
-		ga.SendCommandPath(cmd.CommandPath() + " usage")
-	{{ end }}
 		if extra(cmd) {
 			return nil
 		}
@@ -293,9 +290,6 @@ func init() {
 		ohelp(cmd, args)
 	}
 	usage := func(cmd *cobra.Command) error {
-	{{ if .CLI.Telemetry }}
-		ga.SendCommandPath(cmd.CommandPath() + " usage")
-	{{ end }}
 		if extra(cmd) {
 			return nil
 		}
