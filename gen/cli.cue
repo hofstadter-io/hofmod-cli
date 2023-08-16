@@ -9,8 +9,7 @@ import (
 	"github.com/hofstadter-io/hofmod-cli/templates"
 )
 
-#HofGenerator: #Generator
-#Generator: hof.#Generator & {
+Generator: hof.Generator & {
 	Cli:     schema.#Cli
 	Outdir?: string | *"./"
 
@@ -28,7 +27,7 @@ import (
 
 	basedir: "cmd/\(In.CLI.cliName)"
 
-	PackageName: "github.com/hofstadter-io/hofmod-cli"
+	ModuleName: "github.com/hofstadter-io/hofmod-cli"
 
 	Templates: [{
 		Globs: ["templates/*"]
@@ -66,7 +65,7 @@ import (
 
 	// Files that are not repeatedly used, they are generated once for the whole CLI
 	OnceFiles: [...hof.#File] & [
-		{
+			{
 			TemplatePath: "go.mod"
 			Filepath:     "go.mod"
 		}, {
@@ -277,3 +276,7 @@ import (
 
 	...
 }
+
+// backwards compat
+#HofGenerator: Generator
+#Generator:    Generator

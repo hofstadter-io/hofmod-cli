@@ -6,4 +6,4 @@ import (
 )
 
 Creator:   creators.Creator
-Generator: gen.#Geneartor
+Generator: gen.Geneartor
