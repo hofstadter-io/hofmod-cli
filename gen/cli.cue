@@ -10,7 +10,7 @@ import (
 )
 
 Generator: hof.Generator & {
-	Cli:     schema.#Cli
+	Cli:     schema.Cli
 	Outdir?: string | *"./"
 
 	OutdirConfig: {
@@ -58,13 +58,10 @@ Generator: hof.Generator & {
 		for _, F in S5_Flags {F},
 	]
 
-	// Out: OnceFiles
-	// Out: [...hof.#HofGeneratorFile] & OnceFiles
-	// Out: list.FlattenN(All , 1)
-	Out: [...hof.#File] & All
+	Out: [...hof.File] & All
 
 	// Files that are not repeatedly used, they are generated once for the whole CLI
-	OnceFiles: [...hof.#File] & [
+	OnceFiles: [...hof.File] & [
 			{
 			TemplatePath: "go.mod"
 			Filepath:     "go.mod"
@@ -130,7 +127,7 @@ Generator: hof.Generator & {
 	]
 
 	// Sub command tree
-	S1_Cmds: [...hof.#File] & [
+	S1_Cmds: [...hof.File] & [
 			for _, C in Cli.Commands {
 			In: {
 				CMD: {
@@ -146,7 +143,7 @@ Generator: hof.Generator & {
 	S2C: list.FlattenN([ for P in S1_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name}}]
 	}], 1)
-	S2_Cmds: [...hof.#File] & [ // List comprehension
+	S2_Cmds: [...hof.File] & [ // List comprehension
 			for _, C in S2C {
 			In: {
 				CMD: C
@@ -159,7 +156,7 @@ Generator: hof.Generator & {
 	S3C: list.FlattenN([ for P in S2_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S3_Cmds: [...hof.#File] & [ // List comprehension
+	S3_Cmds: [...hof.File] & [ // List comprehension
 			for _, C in S3C {
 			In: {
 				CMD: C
@@ -172,7 +169,7 @@ Generator: hof.Generator & {
 	S4C: list.FlattenN([ for P in S3_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S4_Cmds: [...hof.#File] & [ // List comprehension
+	S4_Cmds: [...hof.File] & [ // List comprehension
 			for _, C in S4C {
 			In: {
 				CMD: C
@@ -185,7 +182,7 @@ Generator: hof.Generator & {
 	S5C: list.FlattenN([ for P in S4_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S5_Cmds: [...hof.#File] & [ // List comprehension
+	S5_Cmds: [...hof.File] & [ // List comprehension
 			for _, C in S5C {
 			In: {
 				CMD: C
@@ -196,7 +193,7 @@ Generator: hof.Generator & {
 	]
 
 	// Persistent Flags
-	S1_Flags: [...hof.#File] & [ // List comprehension
+	S1_Flags: [...hof.File] & [ // List comprehension
 			for _, C in Cli.Commands if C.Pflags != _|_ || C.Flags != _|_ {
 			In: {
 				// CLI
@@ -213,7 +210,7 @@ Generator: hof.Generator & {
 	S2F: list.FlattenN([ for P in S1_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name}}]
 	}], 1)
-	S2_Flags: [...hof.#File] & [ // List comprehension
+	S2_Flags: [...hof.File] & [ // List comprehension
 			for _, C in S2F {
 			In: {
 				CMD: {
@@ -229,7 +226,7 @@ Generator: hof.Generator & {
 	S3F: list.FlattenN([ for P in S2_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S3_Flags: [...hof.#File] & [ // List comprehension
+	S3_Flags: [...hof.File] & [ // List comprehension
 			for _, C in S3F {
 			In: {
 				CMD: {
@@ -245,7 +242,7 @@ Generator: hof.Generator & {
 	S4F: list.FlattenN([ for P in S3_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S4_Flags: [...hof.#File] & [ // List comprehension
+	S4_Flags: [...hof.File] & [ // List comprehension
 			for _, C in S4F {
 			In: {
 				CMD: {
@@ -261,7 +258,7 @@ Generator: hof.Generator & {
 	S5F: list.FlattenN([ for P in S4_Cmds if len(P.In.CMD.Commands) > 0 {
 		[ for C in P.In.CMD.Commands if C.Pflags != _|_ || C.Flags != _|_ {C, Parent: {Name: P.In.CMD.Name, Parent: P.In.CMD.Parent}}]
 	}], 1)
-	S5_Flags: [...hof.#File] & [ // List comprehension
+	S5_Flags: [...hof.File] & [ // List comprehension
 			for _, C in S5F {
 			In: {
 				CMD: {

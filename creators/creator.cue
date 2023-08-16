@@ -5,7 +5,7 @@ import (
 	"github.com/hofstadter-io/hof/schema/gen"
 )
 
-Creator: gen.#Generator & {
+Creator: gen.Generator & {
 	@gen(creator)
 
 	Create: {
@@ -79,7 +79,7 @@ Creator: gen.#Generator & {
 		...
 	}
 
-	Out: [...gen.#File] & [
+	Out: [...gen.File] & [
 		for file in [
 					// "debug.yaml",
 					"cue.mod/module.cue",

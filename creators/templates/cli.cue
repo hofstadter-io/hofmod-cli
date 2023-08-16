@@ -5,7 +5,7 @@ import (
 	"github.com/hofstadter-io/hofmod-cli/schema"
 )
 
-"{{ .name }}": gen.#Generator & {
+"{{ .name }}": gen.Generator & {
 	@gen({{.name}},cli)
 	Name: "{{ .name }}"
 	Outdir: "./"
@@ -13,7 +13,7 @@ import (
 	WatchGlobs: ["./*.cue"]
 }
 
-cli: schema.#Cli & {
+cli: schema.Cli & {
 
 	Name:    "{{ .name }}"
 	Module:  "{{ .repo }}"
