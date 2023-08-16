@@ -27,7 +27,7 @@ Generator: hof.Generator & {
 
 	basedir: "cmd/\(In.CLI.cliName)"
 
-	ModuleName: "github.com/hofstadter-io/hofmod-cli"
+	ModuleName: string | *"github.com/hofstadter-io/hofmod-cli"
 
 	Templates: [{
 		Globs: ["templates/*"]
