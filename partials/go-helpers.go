@@ -1,6 +1,6 @@
 {{- define "cobra-type" -}}
 {{- if eq . "string"}}String
-{{- else if eq . "[]string" }}StringSlice
+{{- else if eq . "[]string" }}StringArray
 {{- else if eq . "int" }}Int
 {{- else if eq . "[]int" }}IntSlice
 {{- else if eq . "float64" }}Float64

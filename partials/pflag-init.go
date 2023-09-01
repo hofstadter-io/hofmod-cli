@@ -21,8 +21,8 @@
 {{ $Prefix = ( title $Prefix ) }}
 
 func init () {
-  {{ range $i, $F := $.Pflags }}
-	{{ $CmdName }}Cmd.PersistentFlags().{{- template "cobra-type" $F.Type -}}VarP(&(flags.{{ $Prefix }}Pflags.{{ $F.FlagName }}), "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
+  {{- range $i, $F := $.Pflags }}
+	{{ $CmdName }}Cmd.PersistentFlags().AddFlag(flags.{{ $Prefix }}FlagSet.Lookup("{{ $F.Long }}"))
   {{- end }}
 }
 {{ end }}

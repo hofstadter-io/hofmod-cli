@@ -61,7 +61,6 @@ import (
 var {{ .CMD.Name }}Long = `{{ .CMD.Long }}`
 {{ end }}
 
-{{ template "pflag-init" .CMD }}
 {{ template "flag-init" .CMD }}
 
 {{ if .CMD.PersistentPrerun }}

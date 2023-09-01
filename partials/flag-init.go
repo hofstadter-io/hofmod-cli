@@ -1,5 +1,5 @@
 {{ define "flag-init" }}
-{{ if $.Flags}}
+{{ if (or $.Pflags $.Flags)}}
 
 {{ $CmdName := "Root" }}
 {{ if $.CmdName }}
@@ -21,9 +21,12 @@
 {{ $Prefix = ( title $Prefix ) }}
 
 func init () {
-  {{ range $i, $F := $.Flags }}
-	{{ $CmdName }}Cmd.Flags().{{- template "cobra-type" $F.Type -}}VarP(&(flags.{{ $Prefix }}Flags.{{ $F.FlagName }}), "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
-  {{- end }}
+{{ if $.Pflags }}
+	flags.Setup{{ $Prefix }}Pflags({{ $CmdName }}Cmd.PersistentFlags(), &(flags.{{ $Prefix }}Pflags))
+{{ end }}
+{{ if $.Flags }}
+	flags.Setup{{ $Prefix }}Flags({{ $CmdName }}Cmd.Flags(), &(flags.{{ $Prefix }}Flags))
+{{ end }}	
 }
 {{ end }}
 {{ end }}

@@ -1,54 +1,81 @@
 package flags
 
-{{ if .CMD }}
-{{ template "pflag-vars" .CMD }}
-{{ template "flag-vars" .CMD }}
-{{ else }}
 import (
-	"bytes"
-	"fmt"
-	"strings"
+	"github.com/spf13/pflag"
 )
 
-func PrintSubject(title, prefix, subject string, subjects map[string]string) bool {
-	// skip if null or empty
-	if subjects == nil || len(subjects) == 0 {
-		return false
-	}
+var _ *pflag.FlagSet
 
-	// print keys for list, so don't have a subject that name
-	if subject == "list" {
-		var S []string
-		for k, _ := range subjects {
-			S = append(S,k)
-		}
-		var b bytes.Buffer
-		fmt.Fprintln(&b, title)
-		for _, s := range S {
-			fmt.Fprintln(&b, prefix + s)
-		}
+{{ if .CMD }}
+{{ template "flag-setup" .CMD }}
+{{ else }}
+{{ template "flag-setup" .CLI }}
+{{ end }}
 
-		fmt.Println(b.String())
-		return true
-	}
 
-	// print pubject, indenting all lines
-	S, ok := subjects[subject]
-	if !ok {
-		return false
-	}
-	S = strings.Replace(S, "¡", "`", -1)
+{{ define "flag-setup" }}
 
-	var b bytes.Buffer
-	fmt.Fprintln(&b, title)
-	for _, s := range strings.Split(S, "\n") {
-		fmt.Fprintln(&b, prefix + s)
-	}
+{{ $Prefix := "Root" }}
+{{ if $.Parent.Parent.Parent.Parent }}
+  {{ $Prefix = (print $.Parent.Parent.Parent.Parent.Name "__" $.Parent.Parent.Parent.Name "__" $.Parent.Parent.Name "__" $.Parent.Name "__" $.CmdName) }}
+{{ else if $.Parent.Parent.Parent }}
+  {{ $Prefix = (print $.Parent.Parent.Parent.Name "__" $.Parent.Parent.Name "__" $.Parent.Name "__" $.CmdName) }}
+{{ else if $.Parent.Parent }}
+  {{ $Prefix = (print $.Parent.Parent.Name "__" $.Parent.Name "__" $.CmdName) }}
+{{ else if $.Parent }}
+  {{ $Prefix = (print $.Parent.Name "__" $.CmdName) }}
+{{ else if $.CmdName }}
+  {{ $Prefix = $.CmdName }}
+{{ end }}
+{{ $Prefix = ( title $Prefix ) }}
 
-	fmt.Println(b.String())
-	return true
+{{ if (or $.Flags $.Pflags)}}
+var {{ $Prefix }}FlagSet *pflag.FlagSet
+
+{{ if $.Pflags }}
+type {{ $Prefix }}Pflagpole struct {
+  {{ range $i, $F := $.Pflags }}
+  {{ $F.FlagName }} {{ $F.Type }}
+  {{- end }}
 }
 
-{{ template "pflag-vars" .CLI }}
-{{ template "flag-vars" .CLI }}
+func Setup{{ $Prefix }}Pflags(fset *pflag.FlagSet, fpole *{{ $Prefix }}Pflagpole) {
+	// pflags
+  {{ range $i, $F := $.Pflags }}
+	fset.{{- template "cobra-type" $F.Type -}}VarP(&(fpole.{{ $F.FlagName }}), "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
+  {{- end }}
+}
+
+var {{ $Prefix }}Pflags {{ $Prefix }}Pflagpole
+{{ end }}
+
+{{ if $.Flags }}
+type {{ $Prefix }}Flagpole struct {
+  {{ range $i, $F := $.Flags }}
+  {{ $F.FlagName }} {{ $F.Type }}
+  {{- end }}
+}
+
+var {{ $Prefix }}Flags {{ $Prefix }}Flagpole
+
+func Setup{{ $Prefix }}Flags(fset *pflag.FlagSet, fpole *{{ $Prefix }}Flagpole) {
+	// flags
+  {{ range $i, $F := $.Flags }}
+	fset.{{- template "cobra-type" $F.Type -}}VarP(&(fpole.{{ $F.FlagName }}), "{{ $F.Long }}", "{{ $F.Short }}", {{ if $F.Default}}{{$F.Default}}{{else}}{{template "go-default" $F.Type }}{{end}}, "{{ $F.Help }}")
+  {{- end }}
+}
+{{ end }}
+
+func init() {
+	{{ $Prefix }}FlagSet = pflag.NewFlagSet("{{$Prefix}}", pflag.ContinueOnError)
+{{ if $.Pflags }}
+	Setup{{ $Prefix }}Pflags({{ $Prefix }}FlagSet, &{{ $Prefix }}Pflags)
+{{ end }}
+{{ if $.Flags }}
+	Setup{{ $Prefix }}Flags({{ $Prefix }}FlagSet, &{{ $Prefix }}Flags)
+{{ end }}	
+}
+
+
+{{ end }}
 {{ end }}

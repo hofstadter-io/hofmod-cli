@@ -41,7 +41,6 @@ var {{ .CLI.Name }}Long = `{{ .CLI.Long }}`
 {{ end }}
 
 {{ template "flag-init" .CLI }}
-{{ template "pflag-init" .CLI }}
 
 {{ if .CLI.PersistentPrerun }}
 func RootPersistentPreRun({{- template "lib-args.go" . -}}) (err error) {
