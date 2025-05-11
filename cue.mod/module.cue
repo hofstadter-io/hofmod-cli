@@ -1,10 +1,12 @@
 module: "github.com/hofstadter-io/hofmod-cli"
-cue:    "v0.6.0"
-
-require: {
-	"github.com/hofstadter-io/hof": "v0.6.8"
+language: {
+	version: "v0.13.0"
 }
-
-indirect: {
-	"github.com/hofstadter-io/ghacue": "v0.2.0"
+source: {
+	kind: "git"
+}
+deps: {
+	"github.com/hofstadter-io/schemas@v0": {
+		v: "v0.0.1"
+	}
 }
